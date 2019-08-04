@@ -27,8 +27,8 @@ public class ApmHandler {
 		executor.submit(() -> {
 			if (TransactionUtils.isFirstEvent(transactionStore, location, parameters, event))
 				TransactionUtils.startTransaction(transactionStore, location, parameters, event);
-			else
-				SpanUtils.startSpan(transactionStore, location, parameters, event);
+
+			SpanUtils.startSpan(transactionStore, location, parameters, event);
 		});
 	}
 

@@ -8,8 +8,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
 	
-	<import doc:name="Import" doc:id="72ec1ad3-6910-4038-848e-8af9dbb838bf" file="tracer.xml" />
-	
+<!-- 	<import doc:name="Import" doc:id="72ec1ad3-6910-4038-848e-8af9dbb838bf" file="tracer.xml" />
+ -->	
 	<flow name="dep-testFlow" doc:id="e26ae845-7707-4dff-8b5b-09e42b49b4e7" >
 		<http:listener doc:name="Listener" doc:id="fbe03b8d-6137-4bac-b119-3513e1bca8b9" config-ref="HTTP_Listener_config" path="/"/>
 		<logger level="INFO" doc:name="Logger" doc:id="ad07f7f7-9256-4424-8607-d2c13d620b0c" message="something else"/>

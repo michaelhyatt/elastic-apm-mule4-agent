@@ -48,9 +48,19 @@ public class TransactionUtils {
 		return event.getCorrelationId();
 	}
 
+	private static boolean hasParentTraceContext(InterceptionEvent event,
+			Map<String, ProcessorParameterValue> parameters) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	private static String extractHeader(String key, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
+		
+		// HTTP propagation
+		
+		
 		return null;
 	}
 
@@ -60,12 +70,6 @@ public class TransactionUtils {
 		
 		transaction.setStartTimestamp(getTimestamp(event));
 
-	}
-
-	private static boolean hasParentTraceContext(InterceptionEvent event,
-			Map<String, ProcessorParameterValue> parameters) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	private static long getTimestamp(InterceptionEvent event) {

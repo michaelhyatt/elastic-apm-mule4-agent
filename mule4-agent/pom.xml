@@ -6,12 +6,16 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Elastic Mule 4 APM agent</name>
 	<description>Elastic Mule 4 APM agent</description>
+	<packaging>jar</packaging>
 
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 
 		<elastic-apm.version>1.8.0</elastic-apm.version>
+		<version.byte-buddy>1.9.11</version.byte-buddy>
+
+		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -32,12 +36,84 @@
 	</build>
 
 	<dependencies>
+		<!-- Test Mule dependencies -->
+		<dependency>
+			<groupId>org.mule.tests</groupId>
+			<artifactId>mule-tests-functional</artifactId>
+			<version>4.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.tests</groupId>
+			<artifactId>mule-tests-runner</artifactId>
+			<version>4.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.tests</groupId>
+			<artifactId>mule-tests-unit</artifactId>
+			<version>4.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.tests.plugin</groupId>
+			<artifactId>mule-tests-component-plugin</artifactId>
+			<version>4.2.0</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.mule.runtime</groupId>
 			<artifactId>mule-api</artifactId>
-			<version>1.1.5</version>
+			<version>1.2.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mule.runtime</groupId>
+			<artifactId>mule-core</artifactId>
+			<version>4.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.runtime</groupId>
+			<artifactId>mule-module-service</artifactId>
+			<version>4.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.runtime</groupId>
+			<artifactId>mule-module-extensions-spring-support</artifactId>
+			<version>4.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Elastic APM -->
+		<dependency>
+			<groupId>co.elastic.apm</groupId>
+			<artifactId>elastic-apm-agent</artifactId>
+			<version>${elastic-apm.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>${version.byte-buddy}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>co.elastic.apm</groupId>
+			<artifactId>apm-agent-attach</artifactId>
+			<version>${elastic-apm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>co.elastic.apm</groupId>
+			<artifactId>apm-agent-api</artifactId>
+			<version>${elastic-apm.version}</version>
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -54,17 +130,33 @@
 			<version>2.10.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>co.elastic.apm</groupId>
-			<artifactId>apm-agent-attach</artifactId>
-			<version>${elastic-apm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>co.elastic.apm</groupId>
-			<artifactId>apm-agent-api</artifactId>
-			<version>${elastic-apm.version}</version>
-		</dependency>
+
 
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>anypoint-exchange</id>
+			<name>Anypoint Exchange</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v1/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mulesoft-releases</id>
+			<name>mulesoft release repository</name>
+			<layout>default</layout>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
