@@ -7,13 +7,13 @@ import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 public class SpanUtils {
-	public static void startSpan(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public static void startSpan(TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	public static void endSpan(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public static void endSpan(TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
 		

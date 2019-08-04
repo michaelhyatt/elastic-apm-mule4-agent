@@ -8,19 +8,19 @@ import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 public class TransactionUtils {
 
-	public static boolean isFirstEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public static boolean isFirstEvent(TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public static void startTransaction(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public static void startTransaction(TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public static void endTransaction(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public static void endTransaction(TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		// TODO Auto-generated method stub
 

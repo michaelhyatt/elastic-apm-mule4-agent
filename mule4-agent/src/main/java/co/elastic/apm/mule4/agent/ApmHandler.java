@@ -16,7 +16,10 @@ public class ApmHandler {
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
 	private ExecutorService executor;
 
+	private TransactionStore transactionStore = new TransactionStore();
+
 	public ApmHandler() {
+
 		executor = Executors.newFixedThreadPool(
 				Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));
 	}
@@ -26,10 +29,10 @@ public class ApmHandler {
 		logger.trace("Handling start event");
 
 		executor.submit(() -> {
-			if (TransactionUtils.isFirstEvent(location, parameters, event))
-				TransactionUtils.startTransaction(location, parameters, event);
+			if (TransactionUtils.isFirstEvent(transactionStore, location, parameters, event))
+				TransactionUtils.startTransaction(transactionStore, location, parameters, event);
 			else
-				SpanUtils.startSpan(location, parameters, event);
+				SpanUtils.startSpan(transactionStore, location, parameters, event);
 		});
 	}
 
@@ -37,21 +40,21 @@ public class ApmHandler {
 			InterceptionEvent event) {
 		logger.trace("Handling end event");
 
-		executor.submit(() -> SpanUtils.endSpan(location, parameters, event));
+		executor.submit(() -> SpanUtils.endSpan(transactionStore, location, parameters, event));
 	}
 
 	public void handleExceptionEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling exception event");
 
-		executor.submit(() -> ExceptionUtils.captureException(location, parameters, event));
+		executor.submit(() -> ExceptionUtils.captureException(transactionStore, location, parameters, event));
 	}
 
 	public void handleSourceBeforeCallback(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling source before callback event");
 
-		executor.submit(() -> TransactionUtils.endTransaction(location, parameters, event));
+		executor.submit(() -> TransactionUtils.endTransaction(transactionStore, location, parameters, event));
 	}
 
 }
