@@ -12,6 +12,7 @@ import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import co.elastic.apm.agent.bci.ElasticApmAgent;
+import co.elastic.apm.agent.impl.ElasticApmTracer;
 import co.elastic.apm.agent.impl.ElasticApmTracerBuilder;
 import co.elastic.apm.agent.impl.error.ErrorCapture;
 import co.elastic.apm.agent.impl.transaction.Span;
@@ -20,7 +21,7 @@ import co.elastic.apm.agent.report.Reporter;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 @ArtifactClassLoaderRunnerConfig(applicationSharedRuntimeLibs = { "co.elastic.apm:elastic-apm-agent",
-		"co.elastic.apm:apm-agent-attach" })
+		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:mule4-agent" })
 public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctionalTestCase {
 
 	protected List<Span> spans;
@@ -38,6 +39,7 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	public void doSetUpBeforeMuleContextCreation() {
 
 		System.setProperty("elastic.apm.instrument", "false");
+		System.setProperty("elastic.apm.active", "false");
 
 		Reporter reporter = Mockito.mock(Reporter.class);
 
@@ -67,8 +69,11 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 			}
 		}).when(reporter).report(Mockito.any(ErrorCapture.class));
 
-		ElasticApmAgent.initInstrumentation(new ElasticApmTracerBuilder().reporter(reporter).build(),
-				ByteBuddyAgent.install());
+		ElasticApmTracerBuilder tracerBuilder = new ElasticApmTracerBuilder();
+		tracerBuilder.reporter(reporter);
+		ElasticApmTracer tracer = tracerBuilder.build();
+		
+		ElasticApmAgent.initInstrumentation(tracer, ByteBuddyAgent.install());
 
 	}
 

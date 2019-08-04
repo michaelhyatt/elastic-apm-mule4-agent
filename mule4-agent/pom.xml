@@ -16,6 +16,7 @@
 		<version.byte-buddy>1.9.11</version.byte-buddy>
 
 		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
+		<build.plugins.plugin.version>2.3.2</build.plugins.plugin.version>
 	</properties>
 
 	<build>
