@@ -14,15 +14,11 @@ public class ApmHandler {
 
 	private static final String EXECUTOR_THREAD_COUNT = "executor.thread.count";
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
-	private ExecutorService executor;
+
+	private ExecutorService executor = Executors.newFixedThreadPool(
+			Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));;
 
 	private TransactionStore transactionStore = new TransactionStore();
-
-	public ApmHandler() {
-
-		executor = Executors.newFixedThreadPool(
-				Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));
-	}
 
 	public void handleStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
