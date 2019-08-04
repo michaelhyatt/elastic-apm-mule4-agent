@@ -13,7 +13,7 @@ import co.elastic.apm.attach.ElasticApmAttacher;
 
 public class ApmStarter {
 	
-	private static final String ELASTIC_APM = "elastic.apm.";
+	protected static final String ELASTIC_APM = "elastic.apm.";
 
 	private Logger logger = LoggerFactory.getLogger(ApmStarter.class);
 	
