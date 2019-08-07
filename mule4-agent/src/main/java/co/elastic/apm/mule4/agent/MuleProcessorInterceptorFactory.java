@@ -30,12 +30,15 @@ public class MuleProcessorInterceptorFactory implements ProcessorInterceptorFact
 	private void setupPipelineListener(ApmHandler apmHandler) {
 		ServerNotificationManager notificationManager = registry.lookupByType(ServerNotificationManager.class).get();
 
+		// Register only once
+		synchronized (notificationManager) {
+			if (notificationManager.getListeners().stream()
+					.anyMatch(x -> x.getListener().getClass() == ApmPipelineNotificationListener.class))
+				return;
+		}
+
 		ApmPipelineNotificationListener apmPipelineNotificationListener = new ApmPipelineNotificationListener(
 				apmHandler);
-
-		if (notificationManager.getListeners().stream()
-				.anyMatch(x -> x.getListener().getClass() == ApmPipelineNotificationListener.class))
-			return;
 
 		// Enable notifications
 		notificationManager.setNotificationDynamic(true);
