@@ -26,14 +26,14 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 		
 		logger.debug("===> Before step " + location.getLocation());
 		
-		apmHandler.handleStartEvent(location, parameters, event);
+		apmHandler.handleProcessorStartEvent(location, parameters, event);
 		
 		CompletableFuture<InterceptionEvent> result = action.proceed();
 		
 		if (result.isCompletedExceptionally())
 			apmHandler.handleExceptionEvent(location, parameters, event);
 		
-		apmHandler.handleEndEvent(location, parameters, event);
+		apmHandler.handleProcessorEndEvent(location, parameters, event);
 		
 		logger.debug("===> After step " + location.getLocation());
 		

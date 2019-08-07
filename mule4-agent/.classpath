@@ -32,5 +32,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/axolotl/.m2/repository/co/elastic/apm/mule4-agent/0.0.1-SNAPSHOT/mule4-agent-0.0.1-SNAPSHOT.jar" sourcepath="/Users/axolotl/.m2/repository/co/elastic/apm/mule4-agent/0.0.1-SNAPSHOT/mule4-agent-0.0.1-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

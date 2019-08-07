@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
+import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,23 +17,18 @@ public class ApmHandler {
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
 
 	private ExecutorService executor = Executors.newFixedThreadPool(
-			Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));;
+			Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));
 
 	private TransactionStore transactionStore = new TransactionStore();
 
-	public void handleStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public void handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling start event");
 
-		executor.submit(() -> {
-			if (TransactionUtils.isFirstEvent(transactionStore, location, parameters, event))
-				TransactionUtils.startTransaction(transactionStore, location, parameters, event);
-
-			SpanUtils.startSpan(transactionStore, location, parameters, event);
-		});
+		executor.submit(() -> SpanUtils.startSpan(transactionStore, location, parameters, event));
 	}
 
-	public void handleEndEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public void handleProcessorEndEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling end event");
 
@@ -46,11 +42,24 @@ public class ApmHandler {
 		executor.submit(() -> ExceptionUtils.captureException(transactionStore, location, parameters, event));
 	}
 
-	public void handleSourceBeforeCallback(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public void handleFlowStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
-		logger.trace("Handling source before callback event");
 
-		executor.submit(() -> TransactionUtils.endTransaction(transactionStore, location, parameters, event));
+	}
+
+	public void handleFlowStartEvent(PipelineMessageNotification notification) {
+		logger.trace("Handling flow start event");
+
+		executor.submit(() -> {
+			if (TransactionUtils.isFirstEvent(transactionStore, notification))
+				TransactionUtils.startTransaction(transactionStore, notification);
+		});
+	}
+
+	public void handleFlowEndEvent(PipelineMessageNotification notification) {
+		logger.trace("Handling flow end event");
+
+		executor.submit(() -> TransactionUtils.endTransaction(transactionStore, notification));
 	}
 
 }

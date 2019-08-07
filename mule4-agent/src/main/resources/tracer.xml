@@ -11,7 +11,4 @@
 	<object name="_muleProcessorInterceptorFactory"
 		class="co.elastic.apm.mule4.agent.MuleProcessorInterceptorFactory" />
 
-	<object name="_muleSourceInterceptorFactory"
-		class="co.elastic.apm.mule4.agent.MuleSourceInterceptorFactory" />
-
 </mule>
