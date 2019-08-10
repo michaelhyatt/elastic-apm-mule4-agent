@@ -1,5 +1,7 @@
 package co.elastic.apm.mule4.agent;
 
+import java.util.Optional;
+
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 
 import co.elastic.apm.api.ElasticApm;
@@ -56,11 +58,15 @@ public class TransactionUtils {
 	}
 
 	public static void endTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
-		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification));
+		Optional<Transaction> transaction = transactionStore.retrieveTransaction(getTransactionId(notification));
 
-		populateFinalTransactionDetails(transaction, notification);
+		if (!transaction.isPresent())
+			return;
+		
+		Transaction transaction2 = transaction.get();
+		populateFinalTransactionDetails(transaction2, notification);
 
-		transaction.end(getEventTimestamp(notification));
+		transaction2.end(getEventTimestamp(notification));
 	}
 
 	private static long getEventTimestamp(PipelineMessageNotification notification) {

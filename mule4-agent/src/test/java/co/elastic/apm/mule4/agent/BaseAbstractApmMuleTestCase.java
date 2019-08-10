@@ -2,6 +2,7 @@ package co.elastic.apm.mule4.agent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,16 +13,20 @@ import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import co.elastic.apm.agent.bci.ElasticApmAgent;
+import co.elastic.apm.agent.configuration.CoreConfiguration;
 import co.elastic.apm.agent.impl.ElasticApmTracer;
 import co.elastic.apm.agent.impl.ElasticApmTracerBuilder;
 import co.elastic.apm.agent.impl.error.ErrorCapture;
 import co.elastic.apm.agent.impl.transaction.Span;
 import co.elastic.apm.agent.impl.transaction.Transaction;
 import co.elastic.apm.agent.report.Reporter;
+import co.elastic.apm.agent.shaded.stagemonitor.configuration.ConfigurationOptionProvider;
+import co.elastic.apm.agent.shaded.stagemonitor.configuration.ConfigurationRegistry;
+import co.elastic.apm.agent.shaded.stagemonitor.configuration.source.SimpleSource;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 @ArtifactClassLoaderRunnerConfig(applicationSharedRuntimeLibs = { "co.elastic.apm:elastic-apm-agent",
-		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:mule4-agent" })
+		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:apm-agent-api", "co.elastic.apm:mule4-agent" })
 public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctionalTestCase {
 
 	protected List<Span> spans;
@@ -37,9 +42,6 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 
 	@Override
 	public void doSetUpBeforeMuleContextCreation() {
-
-		System.setProperty("elastic.apm.instrument", "false");
-		System.setProperty("elastic.apm.active", "false");
 
 		Reporter reporter = Mockito.mock(Reporter.class);
 
@@ -70,9 +72,17 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 		}).when(reporter).report(Mockito.any(ErrorCapture.class));
 
 		ElasticApmTracerBuilder tracerBuilder = new ElasticApmTracerBuilder();
-		tracerBuilder.reporter(reporter);
+
+		ConfigurationRegistry registry = ConfigurationRegistry.builder()
+				.addConfigSource(new SimpleSource("Noop Configuration").add(CoreConfiguration.ACTIVE, "true")
+						.add(CoreConfiguration.INSTRUMENT, "false").add(CoreConfiguration.SERVICE_NAME, "none")
+						.add("central_config", "false").add(CoreConfiguration.SAMPLE_RATE, "1"))
+				.optionProviders(ServiceLoader.load(ConfigurationOptionProvider.class))
+				.failOnMissingRequiredValues(true).build();
+
+		tracerBuilder.configurationRegistry(registry).reporter(reporter);
 		ElasticApmTracer tracer = tracerBuilder.build();
-		
+
 		ElasticApmAgent.initInstrumentation(tracer, ByteBuddyAgent.install());
 
 	}
