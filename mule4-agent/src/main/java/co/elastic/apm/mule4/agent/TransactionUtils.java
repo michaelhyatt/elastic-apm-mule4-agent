@@ -25,22 +25,26 @@ public class TransactionUtils {
 			transaction.ensureParentId();
 		}
 
-		populateTransactionDetails(transaction, notification);
+		ApmTransaction transaction2 = new ApmTransaction(transaction);
+		populateTransactionDetails(transaction2, notification);
 
-		transactionStore.storeTransaction(getTransactionId(notification), transaction);
+		transactionStore.storeTransaction(getTransactionId(notification), transaction2);
 	}
 
-	private static void populateTransactionDetails(Transaction transaction, PipelineMessageNotification notification) {
+	private static void populateTransactionDetails(ApmTransaction transaction,
+			PipelineMessageNotification notification) {
 
 		transaction.setStartTimestamp(getEventTimestamp(notification));
 
-		transaction.setName(getFlowName(notification));
+		String flowName = getFlowName(notification);
+		transaction.setName(flowName);
+		transaction.setFlowName(flowName);
 
 		transaction.setType(TRANSACTION_TYPE);
 	}
 
 	private static String getFlowName(PipelineMessageNotification notification) {
-		return notification.getEventName();
+		return notification.getResourceIdentifier();
 	}
 
 	private static String getTransactionId(PipelineMessageNotification notification) {
@@ -58,15 +62,29 @@ public class TransactionUtils {
 	}
 
 	public static void endTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
-		Optional<Transaction> transaction = transactionStore.retrieveTransaction(getTransactionId(notification));
 
-		if (!transaction.isPresent())
+		if (!isEndOfTopFlow(transactionStore, notification))
 			return;
-		
-		Transaction transaction2 = transaction.get();
-		populateFinalTransactionDetails(transaction2, notification);
 
-		transaction2.end(getEventTimestamp(notification));
+		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification));
+
+		populateFinalTransactionDetails(transaction, notification);
+
+		transaction.end(getEventTimestamp(notification));
+	}
+
+	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
+		Optional<Transaction> optional = transactionStore.getTransaction(getTransactionId(notification));
+
+		if (!optional.isPresent())
+			return false;
+
+		ApmTransaction transaction = (ApmTransaction) optional.get();
+
+		if (transaction.getFlowName().equals(getFlowName(notification)))
+			return true;
+
+		return false;
 	}
 
 	private static long getEventTimestamp(PipelineMessageNotification notification) {

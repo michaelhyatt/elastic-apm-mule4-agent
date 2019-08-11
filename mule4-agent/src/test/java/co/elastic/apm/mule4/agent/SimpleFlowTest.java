@@ -13,7 +13,7 @@ public class SimpleFlowTest extends BaseAbstractApmMuleTestCase {
 		
 		Thread.sleep(1000);
 		
-		assertEquals("simple_testFlow", getTransaction().getNameAsString());
+		assertEquals("dep-testFlow", getTransaction().getNameAsString());
 //		assertEquals(1, getSpans().size());
 //		assertEquals("Logger", getSpans().get(0).getNameAsString());
 	}

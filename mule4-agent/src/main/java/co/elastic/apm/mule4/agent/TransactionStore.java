@@ -20,10 +20,15 @@ public class TransactionStore {
 		txMap.put(transactionId, transaction);
 	}
 
-	public Optional<Transaction> retrieveTransaction(String transactionId) {
+	public Transaction retrieveTransaction(String transactionId) {
 		// TODO Auto-generated method stub
-		Transaction tx = txMap.remove(transactionId);
-		return tx == null? Optional.empty() : Optional.of(tx);
+		return txMap.remove(transactionId);
+	}
+
+	public Optional<Transaction> getTransaction(String transactionId) {
+		// TODO Auto-generated method stub
+		Transaction transaction = txMap.get(transactionId);
+		return transaction == null? Optional.empty(): Optional.of(transaction);
 	}
 
 }

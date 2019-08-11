@@ -1,8 +1,6 @@
 package co.elastic.apm.mule4.agent;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.interception.InterceptionEvent;
@@ -13,11 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class ApmHandler {
 
-	private static final String EXECUTOR_THREAD_COUNT = "executor.thread.count";
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
-
-	private ExecutorService executor = Executors.newFixedThreadPool(
-			Integer.parseInt(System.getProperty(ApmStarter.ELASTIC_APM + EXECUTOR_THREAD_COUNT, "2")));
 
 	private TransactionStore transactionStore = new TransactionStore();
 
@@ -25,21 +19,21 @@ public class ApmHandler {
 			InterceptionEvent event) {
 		logger.trace("Handling start event");
 
-		executor.submit(() -> SpanUtils.startSpan(transactionStore, location, parameters, event));
+		SpanUtils.startSpan(transactionStore, location, parameters, event);
 	}
 
 	public void handleProcessorEndEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling end event");
 
-		executor.submit(() -> SpanUtils.endSpan(transactionStore, location, parameters, event));
+		SpanUtils.endSpan(transactionStore, location, parameters, event);
 	}
 
 	public void handleExceptionEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling exception event");
 
-		executor.submit(() -> ExceptionUtils.captureException(transactionStore, location, parameters, event));
+		ExceptionUtils.captureException(transactionStore, location, parameters, event);
 	}
 
 	public void handleFlowStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
@@ -50,16 +44,15 @@ public class ApmHandler {
 	public void handleFlowStartEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow start event");
 
-		executor.submit(() -> {
-			if (TransactionUtils.isFirstEvent(transactionStore, notification))
-				TransactionUtils.startTransaction(transactionStore, notification);
-		});
+		if (TransactionUtils.isFirstEvent(transactionStore, notification))
+			TransactionUtils.startTransaction(transactionStore, notification);
+
 	}
 
 	public void handleFlowEndEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow end event");
 
-		executor.submit(() -> TransactionUtils.endTransaction(transactionStore, notification));
+		TransactionUtils.endTransaction(transactionStore, notification);
 	}
 
 }
