@@ -9,31 +9,33 @@ import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import co.elastic.apm.api.Span;
+
 public class ApmHandler {
 
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
 
 	private TransactionStore transactionStore = new TransactionStore();
 
-	public void handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public Span handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling start event");
 
-		SpanUtils.startSpan(transactionStore, location, parameters, event);
+		return SpanUtils.startSpan(transactionStore, location, parameters, event);
 	}
 
-	public void handleProcessorEndEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public void handleProcessorEndEvent(Span span, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling end event");
 
-		SpanUtils.endSpan(transactionStore, location, parameters, event);
+		SpanUtils.endSpan(span, location, parameters, event);
 	}
 
-	public void handleExceptionEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+	public void handleExceptionEvent(Span span, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling exception event");
 
-		ExceptionUtils.captureException(transactionStore, location, parameters, event);
+		ExceptionUtils.captureException(span, transactionStore, location, parameters, event);
 	}
 
 	public void handleFlowStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,

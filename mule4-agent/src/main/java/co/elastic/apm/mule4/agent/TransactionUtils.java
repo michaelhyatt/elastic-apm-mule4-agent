@@ -93,7 +93,7 @@ public class TransactionUtils {
 
 	private static void populateFinalTransactionDetails(Transaction transaction,
 			PipelineMessageNotification notification) {
-		// TODO Auto-generated method stub
+		// Noop
 	}
 
 }

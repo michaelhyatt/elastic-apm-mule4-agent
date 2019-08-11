@@ -11,6 +11,8 @@ import org.mule.runtime.api.interception.ProcessorParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import co.elastic.apm.api.Span;
+
 public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 	private Logger logger = LoggerFactory.getLogger(MuleProcessorInterceptor.class);
@@ -26,14 +28,14 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 		
 		logger.debug("===> Before step " + location.getLocation());
 		
-		apmHandler.handleProcessorStartEvent(location, parameters, event);
+		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
 		
 		CompletableFuture<InterceptionEvent> result = action.proceed();
 		
 		if (result.isCompletedExceptionally())
-			apmHandler.handleExceptionEvent(location, parameters, event);
+			apmHandler.handleExceptionEvent(span, location, parameters, event);
 		
-		apmHandler.handleProcessorEndEvent(location, parameters, event);
+		apmHandler.handleProcessorEndEvent(span, location, parameters, event);
 		
 		logger.debug("===> After step " + location.getLocation());
 		
