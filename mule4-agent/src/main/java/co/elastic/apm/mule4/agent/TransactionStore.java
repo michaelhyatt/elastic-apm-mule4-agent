@@ -1,14 +1,14 @@
 package co.elastic.apm.mule4.agent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import co.elastic.apm.api.Transaction;
 
 public class TransactionStore {
 
-	private Map<String, Transaction> txMap = new HashMap<String, Transaction>();
+	private Map<String, Transaction> txMap = new ConcurrentHashMap<String, Transaction>();
 
 	public boolean isTransactionPresent(String transactionId) {
 		// TODO Auto-generated method stub

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<http:listener-config name="HTTP_Listener_config"
+		doc:name="HTTP Listener config" doc:id="c7c834c8-5a86-40c8-a2e8-431fbb3cc3e4">
+		<http:listener-connection host="0.0.0.0"
+			port="8081" />
+	</http:listener-config>
+
+	<import file="tracer.xml"  doc:name="Import" doc:id="3cd0c923-2ca2-4173-a2e8-c43380f03b3c" />
+	<flow name="dep-testFlow" doc:id="18bc1693-fcef-4af5-b06a-1417a9486478">
+		<http:listener doc:name="Listener"
+			doc:id="b5a16cf1-5151-41be-8c38-8cd59813c24f" config-ref="HTTP_Listener_config"
+			path="/" />
+		<logger level="INFO" doc:name="Logger"
+			doc:id="d0d59261-2102-4ace-be57-a5747764b020" message="something else" />
+		<flow-ref doc:name="Flow Reference" doc:id="495044bb-0be5-44f7-b603-b65e6893c85d" name="dep-testSub_Flow"/>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="0c9d96df-2ce9-46d7-b170-06550e6072a6" message="booo" />
+	</flow>
+	<sub-flow name="dep-testSub_Flow" doc:id="a8ddd165-7b1e-4764-9dc6-dad972c64b40">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="b26a8831-406c-4a7f-847e-eef7ec6d3fc1" message="subflow1" />
+		<flow-ref doc:name="Flow Reference" doc:id="2221c5bc-21a8-4579-8090-07684fec507d" name="dep-testFlow1"/>
+	</sub-flow>
+	<flow name="dep-testFlow1" doc:id="b1a44825-594e-454c-bba8-a73beb6d3b4c">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="8d245e86-ab3d-4f9b-bea5-687e74810f55" message="real flow" />
+	</flow>
+</mule>

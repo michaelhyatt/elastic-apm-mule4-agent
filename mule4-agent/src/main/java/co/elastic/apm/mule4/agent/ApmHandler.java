@@ -38,11 +38,6 @@ public class ApmHandler {
 		ExceptionUtils.captureException(span, transactionStore, location, parameters, event);
 	}
 
-	public void handleFlowStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent event) {
-
-	}
-
 	public void handleFlowStartEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow start event");
 

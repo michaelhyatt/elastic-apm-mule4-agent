@@ -26,7 +26,7 @@ import co.elastic.apm.agent.shaded.stagemonitor.configuration.source.SimpleSourc
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 @ArtifactClassLoaderRunnerConfig(applicationSharedRuntimeLibs = { "co.elastic.apm:elastic-apm-agent",
-		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:apm-agent-api", "co.elastic.apm:mule4-agent" })
+		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:apm-agent-api", "co.elastic.apm:mule4-agent", })
 public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctionalTestCase {
 
 	protected List<Span> spans;

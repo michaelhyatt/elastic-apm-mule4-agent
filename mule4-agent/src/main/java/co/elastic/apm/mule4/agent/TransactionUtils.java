@@ -25,22 +25,24 @@ public class TransactionUtils {
 			transaction.ensureParentId();
 		}
 
-		ApmTransaction transaction2 = new ApmTransaction(transaction);
-		populateTransactionDetails(transaction2, notification);
-
-		transactionStore.storeTransaction(getTransactionId(notification), transaction2);
+		transactionStore.storeTransaction(getTransactionId(notification),
+				populateTransactionDetails(transaction, notification));
 	}
 
-	private static void populateTransactionDetails(ApmTransaction transaction,
+	private static Transaction populateTransactionDetails(Transaction transaction,
 			PipelineMessageNotification notification) {
 
-		transaction.setStartTimestamp(getEventTimestamp(notification));
+		ApmTransaction transaction2 = new ApmTransaction(transaction);
+
+		transaction2.setStartTimestamp(getEventTimestamp(notification));
 
 		String flowName = getFlowName(notification);
-		transaction.setName(flowName);
-		transaction.setFlowName(flowName);
+		transaction2.setName(flowName);
+		transaction2.setFlowName(flowName);
 
-		transaction.setType(TRANSACTION_TYPE);
+		transaction2.setType(TRANSACTION_TYPE);
+
+		return transaction2;
 	}
 
 	private static String getFlowName(PipelineMessageNotification notification) {

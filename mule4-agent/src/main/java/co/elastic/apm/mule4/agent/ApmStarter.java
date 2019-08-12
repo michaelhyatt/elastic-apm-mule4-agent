@@ -8,26 +8,25 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import co.elastic.apm.attach.ElasticApmAttacher;
 
+@Component
 public class ApmStarter {
-	
+
 	protected static final String ELASTIC_APM = "elastic.apm.";
 
 	private Logger logger = LoggerFactory.getLogger(ApmStarter.class);
-	
+
 	public ApmStarter() {
-		
+
 		logger.debug("Initialising Elastic Java APM agent");
 
 		logger.debug("Elastic APM system properties set:");
 
 		// Ensure not to autoinstrument
 		System.setProperty("elastic.apm.instrument", "false");
-		System.setProperty("elastic.apm.log_level", "TRACE");
-		System.setProperty("elastic.apm.disable_instrumentations",
-				"annotations, apache-httpclient, asynchttpclient, concurrent, dispatcher-servlet, elasticsearch-restclient, executor, http-client, incubating, jax-rs, jax-ws, jdbc, jms, jsf, okhttp, opentracing, public-api, render, scheduled, servlet-api, servlet-api-async, servlet-input-stream, servlet-service-name, spring-mvc, spring-resttemplate, spring-service-name, urlconnection");
 
 		Supplier<Stream<Entry<Object, Object>>> apmPropertiesFilter = () -> System.getProperties().entrySet().stream()
 				.filter(x -> x.getKey().toString().startsWith(ELASTIC_APM));
@@ -40,6 +39,7 @@ public class ApmStarter {
 				Collectors.toMap(k -> k.getKey().toString().replace(ELASTIC_APM, ""), v -> v.getValue().toString()));
 
 		ElasticApmAttacher.attach(configMap);
+
 	}
-	
+
 }
