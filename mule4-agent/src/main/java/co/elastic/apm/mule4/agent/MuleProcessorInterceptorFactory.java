@@ -2,21 +2,21 @@ package co.elastic.apm.mule4.agent;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.interception.ProcessorInterceptor;
 import org.mule.runtime.api.interception.ProcessorInterceptorFactory;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.mule.runtime.api.notification.PipelineMessageNotificationListener;
 import org.mule.runtime.core.api.context.notification.ServerNotificationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MuleProcessorInterceptorFactory implements ProcessorInterceptorFactory {
 
 	@Inject
 	private Registry registry;
 
-	private Logger logger = LogManager.getLogger(MuleProcessorInterceptorFactory.class);
+	private Logger logger = LoggerFactory.getLogger(MuleProcessorInterceptorFactory.class);
 
 	@Override
 	public ProcessorInterceptor get() {

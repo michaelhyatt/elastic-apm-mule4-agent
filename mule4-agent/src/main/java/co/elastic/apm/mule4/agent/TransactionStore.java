@@ -11,7 +11,6 @@ public class TransactionStore {
 	private Map<String, Transaction> txMap = new ConcurrentHashMap<String, Transaction>();
 
 	public boolean isTransactionPresent(String transactionId) {
-		// TODO Auto-generated method stub
 		return txMap.containsKey(transactionId);
 	}
 

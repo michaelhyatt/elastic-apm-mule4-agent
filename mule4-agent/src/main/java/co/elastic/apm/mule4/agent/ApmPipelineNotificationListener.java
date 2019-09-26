@@ -1,16 +1,16 @@
 package co.elastic.apm.mule4.agent;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.mule.runtime.api.notification.PipelineMessageNotificationListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApmPipelineNotificationListener
 		implements PipelineMessageNotificationListener<PipelineMessageNotification> {
 
 	private ApmHandler apmHandler;
 
-	private Logger logger = LogManager.getLogger(ApmPipelineNotificationListener.class);
+	private Logger logger = LoggerFactory.getLogger(ApmPipelineNotificationListener.class);
 
 	public ApmPipelineNotificationListener(ApmHandler apmHandler) {
 		this.apmHandler = apmHandler;
@@ -26,8 +26,10 @@ public class ApmPipelineNotificationListener
 			apmHandler.handleFlowStartEvent(notification);
 			break;
 
-		case PipelineMessageNotification.PROCESS_END:
 		case PipelineMessageNotification.PROCESS_COMPLETE:
+			break;
+			
+		case PipelineMessageNotification.PROCESS_END:
 			apmHandler.handleFlowEndEvent(notification);
 			break;
 		}

@@ -2,7 +2,6 @@ package co.elastic.apm.mule4.agent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,16 +12,13 @@ import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import co.elastic.apm.agent.bci.ElasticApmAgent;
-import co.elastic.apm.agent.configuration.CoreConfiguration;
 import co.elastic.apm.agent.impl.ElasticApmTracer;
 import co.elastic.apm.agent.impl.ElasticApmTracerBuilder;
 import co.elastic.apm.agent.impl.error.ErrorCapture;
 import co.elastic.apm.agent.impl.transaction.Span;
 import co.elastic.apm.agent.impl.transaction.Transaction;
 import co.elastic.apm.agent.report.Reporter;
-import co.elastic.apm.agent.shaded.stagemonitor.configuration.ConfigurationOptionProvider;
 import co.elastic.apm.agent.shaded.stagemonitor.configuration.ConfigurationRegistry;
-import co.elastic.apm.agent.shaded.stagemonitor.configuration.source.SimpleSource;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 @ArtifactClassLoaderRunnerConfig(applicationSharedRuntimeLibs = { "co.elastic.apm:elastic-apm-agent",
@@ -32,6 +28,9 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	protected List<Span> spans;
 	protected List<Transaction> tx;
 	protected List<ErrorCapture> errors;
+	private ConfigurationRegistry config;
+	private ElasticApmTracer tracer;
+	private Reporter reporter;
 
 	@Before
 	public void init() {
@@ -43,8 +42,8 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	@Override
 	public void doSetUpBeforeMuleContextCreation() {
 
-		Reporter reporter = Mockito.mock(Reporter.class);
-
+		reporter = Mockito.mock(Reporter.class);
+		
 		Mockito.doAnswer(new Answer<Span>() {
 			@Override
 			public Span answer(InvocationOnMock invocation) throws Throwable {
@@ -71,17 +70,8 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 			}
 		}).when(reporter).report(Mockito.any(ErrorCapture.class));
 
-		ElasticApmTracerBuilder tracerBuilder = new ElasticApmTracerBuilder();
-
-		ConfigurationRegistry registry = ConfigurationRegistry.builder()
-				.addConfigSource(new SimpleSource("Noop Configuration").add(CoreConfiguration.ACTIVE, "true")
-						.add(CoreConfiguration.INSTRUMENT, "false").add(CoreConfiguration.SERVICE_NAME, "none")
-						.add("central_config", "false").add(CoreConfiguration.SAMPLE_RATE, "1"))
-				.optionProviders(ServiceLoader.load(ConfigurationOptionProvider.class))
-				.failOnMissingRequiredValues(true).build();
-
-		tracerBuilder.configurationRegistry(registry).reporter(reporter);
-		ElasticApmTracer tracer = tracerBuilder.build();
+		config = SpyConfiguration.createSpyConfig();
+		tracer = new ElasticApmTracerBuilder().configurationRegistry(config).reporter(reporter).build();
 
 		ElasticApmAgent.initInstrumentation(tracer, ByteBuddyAgent.install());
 

@@ -22,7 +22,7 @@ public class TransactionUtils {
 			transaction = ElasticApm.startTransactionWithRemoteParent(x -> getHeaderExtractor(x, notification));
 		else {
 			transaction = ElasticApm.startTransaction();
-			transaction.ensureParentId();
+//			transaction.ensureParentId();
 		}
 
 		transactionStore.storeTransaction(getTransactionId(notification),
@@ -90,7 +90,7 @@ public class TransactionUtils {
 	}
 
 	private static long getEventTimestamp(PipelineMessageNotification notification) {
-		return notification.getTimestamp() * 1_000;
+		return notification.getTimestamp();
 	}
 
 	private static void populateFinalTransactionDetails(Transaction transaction,

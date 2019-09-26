@@ -21,12 +21,12 @@ public class SpanUtils {
 
 		setSpanDetails(span, location, parameters, event);
 
-		span.setStartTimestamp(getEventTime(event));
+		span.setStartTimestamp(getEventTimestamp(event));
 
 		return span;
 	}
 
-	private static long getEventTime(InterceptionEvent event) {
+	private static long getEventTimestamp(InterceptionEvent event) {
 		return event.getContext().getReceivedTime().toEpochMilli() * 1_000;
 	}
 
@@ -62,7 +62,7 @@ public class SpanUtils {
 
 		setFinalDetails(span, location, parameters, event);
 		
-		span.end(getEventTime(event));
+		span.end(getEventTimestamp(event));
 		
 	}
 

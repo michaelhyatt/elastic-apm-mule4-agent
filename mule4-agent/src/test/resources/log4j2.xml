@@ -13,7 +13,7 @@
         <AsyncLogger name="org.mule.service.http" level="WARN"/>
         <AsyncLogger name="org.mule.extension.http" level="WARN"/>
         
-        <AsyncLogger name="co.elastic" level="TRACE"/>
+        <AsyncLogger name="co.elastic" level="DEBUG"/>
     
 		<!-- Mule logger -->        
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>  
