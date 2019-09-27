@@ -33,7 +33,6 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 		return action.proceed().exceptionally(ex -> {
 
 			logger.debug("===> Exception step {}", location.getLocation());
-			
 
 			apmHandler.handleExceptionEvent(span, location, parameters, event, ex);
 
