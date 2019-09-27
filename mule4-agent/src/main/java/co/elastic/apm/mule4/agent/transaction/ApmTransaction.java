@@ -1,4 +1,4 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.transaction;
 
 import co.elastic.apm.api.HeaderInjector;
 import co.elastic.apm.api.Scope;

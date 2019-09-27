@@ -1,7 +1,8 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.transaction;
 
 import java.util.Optional;
 
+import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 
 import co.elastic.apm.api.ElasticApm;
@@ -10,7 +11,7 @@ import co.elastic.apm.api.Transaction;
 public class TransactionUtils {
 
 	public static boolean isFirstEvent(TransactionStore transactionStore, PipelineMessageNotification notification) {
-		return !transactionStore.isTransactionPresent(getTransactionId(notification));
+		return !transactionStore.isTransactionPresent(getTransactionId(notification).get());
 	}
 
 	public static void startTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
@@ -23,7 +24,7 @@ public class TransactionUtils {
 			// transaction.ensureParentId();
 		}
 
-		transactionStore.storeTransaction(getTransactionId(notification),
+		transactionStore.storeTransaction(getTransactionId(notification).get(),
 				populateTransactionDetails(transaction, notification));
 	}
 
@@ -47,8 +48,14 @@ public class TransactionUtils {
 		return notification.getResourceIdentifier();
 	}
 
-	private static String getTransactionId(PipelineMessageNotification notification) {
-		return notification.getEvent().getCorrelationId();
+	private static Optional<String> getTransactionId(PipelineMessageNotification notification) {
+
+		Event event = notification.getEvent();
+
+		if (event != null)
+			return Optional.of(event.getCorrelationId());
+
+		return Optional.empty();
 	}
 
 	private static String getHeaderExtractor(String x, PipelineMessageNotification notification) {
@@ -66,7 +73,7 @@ public class TransactionUtils {
 		if (!isEndOfTopFlow(transactionStore, notification))
 			return;
 
-		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification));
+		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification).get());
 
 		populateFinalTransactionDetails(transaction, notification);
 
@@ -74,7 +81,13 @@ public class TransactionUtils {
 	}
 
 	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
-		Optional<Transaction> optional = transactionStore.getTransaction(getTransactionId(notification));
+
+		Optional<String> transactionId = getTransactionId(notification);
+
+		if (!transactionId.isPresent())
+			return false;
+
+		Optional<Transaction> optional = transactionStore.getTransaction(transactionId.get());
 
 		if (!optional.isPresent())
 			return false;

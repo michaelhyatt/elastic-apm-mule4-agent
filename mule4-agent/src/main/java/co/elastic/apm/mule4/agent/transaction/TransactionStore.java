@@ -1,4 +1,4 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.transaction;
 
 import java.util.Map;
 import java.util.Optional;
@@ -15,19 +15,15 @@ public class TransactionStore {
 	}
 
 	public void storeTransaction(String transactionId, Transaction transaction) {
-		// TODO Auto-generated method stub
 		txMap.put(transactionId, transaction);
 	}
 
 	public Transaction retrieveTransaction(String transactionId) {
-		// TODO Auto-generated method stub
 		return txMap.remove(transactionId);
 	}
 
 	public Optional<Transaction> getTransaction(String transactionId) {
-		// TODO Auto-generated method stub
-		Transaction transaction = txMap.get(transactionId);
-		return transaction == null? Optional.empty(): Optional.of(transaction);
+		return Optional.ofNullable(txMap.get(transactionId));
 	}
 
 }

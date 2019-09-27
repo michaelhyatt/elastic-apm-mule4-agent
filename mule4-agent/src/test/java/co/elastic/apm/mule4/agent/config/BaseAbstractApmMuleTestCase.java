@@ -1,4 +1,4 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.config;
 
 import java.util.ArrayList;
 import java.util.List;

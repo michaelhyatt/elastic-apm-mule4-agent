@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import co.elastic.apm.mule4.agent.config.BaseAbstractApmMuleTestCase;
+
 public class SimpleFlowTest extends BaseAbstractApmMuleTestCase {
 
 	@Test
@@ -17,15 +19,15 @@ public class SimpleFlowTest extends BaseAbstractApmMuleTestCase {
 		assertEquals(6, getSpans().size());
 		assertEquals("logger", getSpans().get(0).getNameAsString());
 		assertEquals("logger", getSpans().get(1).getNameAsString());
-		assertEquals("flow-ref", getSpans().get(2).getNameAsString());
-		assertEquals("logger", getSpans().get(3).getNameAsString());
+		assertEquals("logger", getSpans().get(2).getNameAsString());
+		assertEquals("flow-ref", getSpans().get(3).getNameAsString());
 		assertEquals("flow-ref", getSpans().get(4).getNameAsString());
 		assertEquals("logger", getSpans().get(5).getNameAsString());
 	}
 
 	@Override
 	protected String getConfigFile() {
-		return "TimingTest.xml";
+		return "SimpleFlowTest.xml";
 	}
 	
 }
