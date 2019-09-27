@@ -10,7 +10,7 @@ import co.elastic.apm.api.Span;
 
 public class ExceptionUtils {
 	public static void captureException(Span span, TransactionStore transactionStore, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent event) {
+			InterceptionEvent finalEvent) {
 		// TODO Auto-generated method stub
 		
 	}

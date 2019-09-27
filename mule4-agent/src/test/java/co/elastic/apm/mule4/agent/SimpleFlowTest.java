@@ -25,7 +25,7 @@ public class SimpleFlowTest extends BaseAbstractApmMuleTestCase {
 
 	@Override
 	protected String getConfigFile() {
-		return "SimpleFlowTest.xml";
+		return "TimingTest.xml";
 	}
 	
 }

@@ -32,10 +32,10 @@ public class ApmHandler {
 	}
 
 	public void handleExceptionEvent(Span span, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent event) {
+			InterceptionEvent finalEvent) {
 		logger.trace("Handling exception event");
 
-		ExceptionUtils.captureException(span, transactionStore, location, parameters, event);
+		ExceptionUtils.captureException(span, transactionStore, location, parameters, finalEvent);
 	}
 
 	public void handleFlowStartEvent(PipelineMessageNotification notification) {

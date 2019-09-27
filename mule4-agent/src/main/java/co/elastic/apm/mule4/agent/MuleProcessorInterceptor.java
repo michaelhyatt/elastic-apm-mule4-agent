@@ -17,7 +17,7 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 	private Logger logger = LoggerFactory.getLogger(MuleProcessorInterceptor.class);
 	private ApmHandler apmHandler;
-	
+
 	public MuleProcessorInterceptor(ApmHandler apmHandler) {
 		this.apmHandler = apmHandler;
 	}
@@ -25,24 +25,23 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 	@Override
 	public CompletableFuture<InterceptionEvent> around(ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, InterceptionAction action) {
-		
-		logger.debug("===> Before step " + location.getLocation());
-		
+
+		logger.debug("===> Before step {}", location.getLocation());
+
 		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
-		
-		CompletableFuture<InterceptionEvent> result = action.proceed();
-		
-		if (result.isCompletedExceptionally())
-			apmHandler.handleExceptionEvent(span, location, parameters, event);
-		
-		apmHandler.handleProcessorEndEvent(span, location, parameters, event);
-		
-		logger.debug("===> After step " + location.getLocation());
-		
-		return result;
-		
+
+		return action.proceed().thenApplyAsync(finalEvent -> {
+
+			if (finalEvent.getError().isPresent())
+				apmHandler.handleExceptionEvent(span, location, parameters, finalEvent);
+			else
+				apmHandler.handleProcessorEndEvent(span, location, parameters, finalEvent);
+			
+			logger.debug("===> After step {}", location.getLocation());
+
+			return finalEvent;
+		});
+
 	}
-	
-	
 
 }

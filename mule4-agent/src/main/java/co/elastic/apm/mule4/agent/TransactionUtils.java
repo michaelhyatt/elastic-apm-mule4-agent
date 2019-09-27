@@ -9,8 +9,6 @@ import co.elastic.apm.api.Transaction;
 
 public class TransactionUtils {
 
-	private static final String TRANSACTION_TYPE = "mule";
-
 	public static boolean isFirstEvent(TransactionStore transactionStore, PipelineMessageNotification notification) {
 		return !transactionStore.isTransactionPresent(getTransactionId(notification));
 	}
@@ -22,7 +20,7 @@ public class TransactionUtils {
 			transaction = ElasticApm.startTransactionWithRemoteParent(x -> getHeaderExtractor(x, notification));
 		else {
 			transaction = ElasticApm.startTransaction();
-//			transaction.ensureParentId();
+			// transaction.ensureParentId();
 		}
 
 		transactionStore.storeTransaction(getTransactionId(notification),
@@ -40,7 +38,7 @@ public class TransactionUtils {
 		transaction2.setName(flowName);
 		transaction2.setFlowName(flowName);
 
-		transaction2.setType(TRANSACTION_TYPE);
+		transaction2.setType(Transaction.TYPE_REQUEST);
 
 		return transaction2;
 	}
@@ -90,7 +88,7 @@ public class TransactionUtils {
 	}
 
 	private static long getEventTimestamp(PipelineMessageNotification notification) {
-		return notification.getTimestamp();
+		return notification.getTimestamp() * 1_000;
 	}
 
 	private static void populateFinalTransactionDetails(Transaction transaction,

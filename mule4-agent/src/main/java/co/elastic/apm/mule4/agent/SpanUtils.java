@@ -21,19 +21,13 @@ public class SpanUtils {
 
 		setSpanDetails(span, location, parameters, event);
 
-		span.setStartTimestamp(getEventTimestamp(event));
-
 		return span;
-	}
-
-	private static long getEventTimestamp(InterceptionEvent event) {
-		return event.getContext().getReceivedTime().toEpochMilli() * 1_000;
 	}
 
 	private static void setSpanDetails(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		// TODO Auto-generated method stub
-		
+
 		span.setName(location.getComponentIdentifier().getIdentifier().getName());
 
 	}
@@ -61,15 +55,15 @@ public class SpanUtils {
 			InterceptionEvent event) {
 
 		setFinalDetails(span, location, parameters, event);
-		
-		span.end(getEventTimestamp(event));
-		
+
+		span.end();
+
 	}
 
 	private static void setFinalDetails(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		// Noop
-		
+
 	}
 
 }
