@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.elastic.apm.api.Span;
+import co.elastic.apm.mule4.agent.span.SpanUtils;
+import co.elastic.apm.mule4.agent.transaction.TransactionStore;
+import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
 public class ApmHandler {
 
@@ -24,18 +27,18 @@ public class ApmHandler {
 		return SpanUtils.startSpan(transactionStore, location, parameters, event);
 	}
 
-	public void handleProcessorEndEvent(Span span, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent event) {
+	public void handleProcessorEndEvent(Span span, ComponentLocation location,
+			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		logger.trace("Handling end event");
 
 		SpanUtils.endSpan(span, location, parameters, event);
 	}
 
-	public void handleExceptionEvent(Span span, ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent finalEvent) {
+	public void handleExceptionEvent(Span span, ComponentLocation location,
+			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
 		logger.trace("Handling exception event");
 
-		ExceptionUtils.captureException(span, transactionStore, location, parameters, finalEvent);
+		ExceptionUtils.captureException(span, transactionStore, location, parameters, event, ex);
 	}
 
 	public void handleFlowStartEvent(PipelineMessageNotification notification) {

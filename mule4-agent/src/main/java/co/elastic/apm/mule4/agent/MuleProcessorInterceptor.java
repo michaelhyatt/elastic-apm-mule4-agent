@@ -30,14 +30,19 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
 
-		return action.proceed().thenApplyAsync(finalEvent -> {
+		return action.proceed().exceptionally(ex -> {
 
-			if (finalEvent.getError().isPresent())
-				apmHandler.handleExceptionEvent(span, location, parameters, finalEvent);
-			else
-				apmHandler.handleProcessorEndEvent(span, location, parameters, finalEvent);
-			
+			logger.debug("===> Exception step {}", location.getLocation());
+
+			apmHandler.handleExceptionEvent(span, location, parameters, event, ex);
+
+			throw new RuntimeException(ex);
+
+		}).thenApplyAsync(finalEvent -> {
+
 			logger.debug("===> After step {}", location.getLocation());
+
+			apmHandler.handleProcessorEndEvent(span, location, parameters, finalEvent);
 
 			return finalEvent;
 		});

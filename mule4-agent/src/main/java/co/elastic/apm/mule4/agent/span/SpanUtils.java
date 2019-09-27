@@ -1,4 +1,4 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.span;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 import co.elastic.apm.api.Span;
 import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 public class SpanUtils {
 	public static Span startSpan(TransactionStore transactionStore, ComponentLocation location,
@@ -56,6 +57,7 @@ public class SpanUtils {
 
 		setFinalDetails(span, location, parameters, event);
 
+		// TODO Check how to get the timestamps from the message
 		span.end();
 
 	}
