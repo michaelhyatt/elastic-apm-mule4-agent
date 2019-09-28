@@ -9,23 +9,30 @@ import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 import co.elastic.apm.api.Span;
 import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 public class ExceptionUtils {
+	private static final String ERROR_FLOW = "ERROR_FLOW";
+	private static final String ERROR_STEP = "ERROR_STEP";
+
 	public static void captureException(Span span, TransactionStore transactionStore, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
 
-		// Capture exception, finish span and tranaction
-		span.captureException(ex);
-
 		span.end();
-
-		Optional<Transaction> transaction = transactionStore.getTransaction(getTransactionId(event));
+		
+		String transactionId = getTransactionId(event);
+		
+		Optional<Transaction> transaction = transactionStore.getTransaction(transactionId);
 
 		if (!transaction.isPresent())
 			return;
-
-		transaction.get().end();
+		
+		Transaction transaction2 = transactionStore.retrieveTransaction(transactionId);
+		transaction2.captureException(ex.getCause());
+		transaction2.addLabel(ERROR_STEP, SpanUtils.getStepName(location));
+		transaction2.addLabel(ERROR_FLOW, SpanUtils.getFlowName(location));
+		transaction2.end();
 
 	}
 

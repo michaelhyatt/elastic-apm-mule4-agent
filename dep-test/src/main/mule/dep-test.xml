@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 
 	<http:listener-config name="HTTP_Listener_config"
 		doc:name="HTTP Listener config" doc:id="c7c834c8-5a86-40c8-a2e8-431fbb3cc3e4">
@@ -32,5 +33,13 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<flow name="dep-testFlow1" doc:id="b1a44825-594e-454c-bba8-a73beb6d3b4c">
 		<logger level="INFO" doc:name="Logger"
 			doc:id="8d245e86-ab3d-4f9b-bea5-687e74810f55" message="real flow" />
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="6d3eda0d-f4d5-4e19-8bde-3d317045804e" >
+			<scripting:code >def val = Math.abs(new Random().nextInt() % 10) + 1;
+
+print val;
+
+if (val == 5)
+  throw new Exception(&quot;This is 5 my dudes!&quot;);</scripting:code>
+		</scripting:execute>
 	</flow>
 </mule>

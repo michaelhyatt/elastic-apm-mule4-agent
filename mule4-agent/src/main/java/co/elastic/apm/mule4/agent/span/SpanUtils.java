@@ -29,8 +29,12 @@ public class SpanUtils {
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		// TODO Auto-generated method stub
 
-		span.setName(location.getComponentIdentifier().getIdentifier().getName());
+		span.setName(getStepName(location));
 
+	}
+
+	public static String getStepName(ComponentLocation location) {
+		return location.getComponentIdentifier().getIdentifier().getName();
 	}
 
 	private static String getAction(ComponentLocation location) {
@@ -66,6 +70,10 @@ public class SpanUtils {
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		// Noop
 
+	}
+
+	public static String getFlowName(ComponentLocation location) {
+		return location.getLocation();
 	}
 
 }
