@@ -30,7 +30,7 @@ public class ExceptionUtils {
 		
 		Transaction transaction2 = transactionStore.retrieveTransaction(transactionId);
 		transaction2.captureException(ex.getCause());
-		transaction2.addLabel(ERROR_STEP, SpanUtils.getStepName(location));
+		transaction2.addLabel(ERROR_STEP, SpanUtils.getStepName(parameters));
 		transaction2.addLabel(ERROR_FLOW, SpanUtils.getFlowName(location));
 		transaction2.end();
 

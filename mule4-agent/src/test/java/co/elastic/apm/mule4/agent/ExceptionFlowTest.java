@@ -17,7 +17,7 @@ public class ExceptionFlowTest extends BaseAbstractApmMuleTestCase {
 		assertEquals("ErrorFlowTest", getTransaction().getNameAsString());
 		assertEquals(1, getSpans().size());
 		assertEquals(1, getErrors().size());
-		assertEquals("execute", getSpans().get(0).getNameAsString());
+		assertEquals("Execute", getSpans().get(0).getNameAsString());
 		assertEquals("java.lang.Exception: This is an error", getErrors().get(0).getException().getMessage());
 
 	}

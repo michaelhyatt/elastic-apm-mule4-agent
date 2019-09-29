@@ -11,6 +11,9 @@ import co.elastic.apm.api.Transaction;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 public class SpanUtils {
+	private static final String DOC_NAME = "doc:name";
+	private static final String UNNAMED = "...";
+
 	public static Span startSpan(TransactionStore transactionStore, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		String transactionId = getTransactionId(event);
@@ -29,12 +32,17 @@ public class SpanUtils {
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		// TODO Auto-generated method stub
 
-		span.setName(getStepName(location));
+		span.setName(getStepName(parameters));
 
 	}
 
-	public static String getStepName(ComponentLocation location) {
-		return location.getComponentIdentifier().getIdentifier().getName();
+	public static String getStepName(Map<String, ProcessorParameterValue> parameters) {
+		ProcessorParameterValue nameParam = parameters.get(DOC_NAME);
+		
+		if (nameParam == null)
+			return UNNAMED;
+		
+		return nameParam.providedValue();
 	}
 
 	private static String getAction(ComponentLocation location) {

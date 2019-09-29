@@ -17,12 +17,12 @@ public class SimpleFlowTest extends BaseAbstractApmMuleTestCase {
 		
 		assertEquals("dep-testFlow", getTransaction().getNameAsString());
 		assertEquals(6, getSpans().size());
-		assertEquals("logger", getSpans().get(0).getNameAsString());
-		assertEquals("logger", getSpans().get(1).getNameAsString());
-		assertEquals("logger", getSpans().get(2).getNameAsString());
-		assertEquals("flow-ref", getSpans().get(3).getNameAsString());
-		assertEquals("flow-ref", getSpans().get(4).getNameAsString());
-		assertEquals("logger", getSpans().get(5).getNameAsString());
+		assertEquals("Logger1", getSpans().get(0).getNameAsString());
+		assertEquals("Logger3", getSpans().get(1).getNameAsString());
+		assertEquals("Logger4", getSpans().get(2).getNameAsString());
+		assertEquals("Flow Reference2", getSpans().get(3).getNameAsString());
+		assertEquals("Flow Reference1", getSpans().get(4).getNameAsString());
+		assertEquals("Logger2", getSpans().get(5).getNameAsString());
 	}
 
 	@Override
