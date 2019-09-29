@@ -11,6 +11,7 @@ import co.elastic.apm.api.Transaction;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 public class SpanUtils {
+	private static final String SUBTYPE = "mule-step";
 	private static final String DOC_NAME = "doc:name";
 	private static final String UNNAMED = "...";
 
@@ -21,7 +22,7 @@ public class SpanUtils {
 		Transaction transaction = transactionStore.getTransaction(transactionId)
 				.orElseThrow(() -> new RuntimeException("Could not find transaction " + transactionId));
 
-		Span span = transaction.startSpan(getType(location), getSubType(location), getAction(location));
+		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
 
 		setSpanDetails(span, location, parameters, event);
 
@@ -47,17 +48,17 @@ public class SpanUtils {
 
 	private static String getAction(ComponentLocation location) {
 		// TODO Auto-generated method stub
-		return "step";
+		return getSpanType(location);
 	}
 
 	private static String getSubType(ComponentLocation location) {
 		// TODO Auto-generated method stub
-		return "subtype";
+		return SUBTYPE;
 	}
 
-	private static String getType(ComponentLocation location) {
+	private static String getSpanType(ComponentLocation location) {
 		// TODO Auto-generated method stub
-		return location.getComponentIdentifier().getType().name();
+		return location.getComponentIdentifier().getIdentifier().getName();
 	}
 
 	private static String getTransactionId(InterceptionEvent event) {
