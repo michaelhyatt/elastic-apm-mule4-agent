@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.elastic.apm.api.Span;
+import co.elastic.apm.mule4.agent.exception.ExceptionUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 import co.elastic.apm.mule4.agent.transaction.TransactionUtils;

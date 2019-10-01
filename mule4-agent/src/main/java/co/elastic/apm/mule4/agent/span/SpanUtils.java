@@ -82,7 +82,7 @@ public class SpanUtils {
 	}
 
 	public static String getFlowName(ComponentLocation location) {
-		return location.getLocation();
+		return location.getLocation().split("/")[0];
 	}
 
 }

@@ -1,4 +1,4 @@
-package co.elastic.apm.mule4.agent;
+package co.elastic.apm.mule4.agent.exception;
 
 import java.util.Map;
 import java.util.Optional;
