@@ -12,7 +12,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 
-		<elastic-apm.version>1.9.0</elastic-apm.version>
+		<elastic-apm.version>1.10.0</elastic-apm.version>
 
 		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 		<build.plugins.plugin.version>2.3.2</build.plugins.plugin.version>
@@ -99,15 +99,13 @@
 		<dependency>
 			<groupId>co.elastic.apm</groupId>
 			<artifactId>elastic-apm-agent</artifactId>
-			<version>1.9.1-SNAPSHOT</version>
-			<!-- <version>${elastic-apm.version}</version> -->
+			<version>${elastic-apm.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.elastic.apm</groupId>
 			<artifactId>apm-agent-attach</artifactId>
-			<version>1.9.1-SNAPSHOT</version>
-			<!-- <version>${elastic-apm.version}</version> -->
+			<version>${elastic-apm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>co.elastic.apm</groupId>

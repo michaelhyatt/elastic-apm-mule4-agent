@@ -27,7 +27,7 @@ public class ApmPipelineNotificationListener
 			break;
 
 		case PipelineMessageNotification.PROCESS_END:
-//			break;
+			break;
 			
 		case PipelineMessageNotification.PROCESS_COMPLETE:
 			apmHandler.handleFlowEndEvent(notification);

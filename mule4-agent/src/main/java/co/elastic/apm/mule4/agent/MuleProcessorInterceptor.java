@@ -30,7 +30,8 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
 
-		return action.proceed().exceptionally(ex -> {
+		return action.proceed()
+				.exceptionally(ex -> {
 
 			logger.debug("===> Exception step {}", location.getLocation());
 
@@ -38,7 +39,8 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 			throw new RuntimeException(ex);
 
-		}).thenApplyAsync(finalEvent -> {
+		})
+				.thenApply(finalEvent -> {
 
 			logger.debug("===> After step {}", location.getLocation());
 

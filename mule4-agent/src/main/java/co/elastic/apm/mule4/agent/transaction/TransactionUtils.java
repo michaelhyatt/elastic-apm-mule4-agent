@@ -1,9 +1,11 @@
 package co.elastic.apm.mule4.agent.transaction;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
+import org.mule.runtime.core.api.event.CoreEvent;
 
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
@@ -33,8 +35,6 @@ public class TransactionUtils {
 
 		ApmTransaction transaction2 = new ApmTransaction(transaction);
 
-		transaction2.setStartTimestamp(getEventTimestamp(notification));
-
 		String flowName = getFlowName(notification);
 		transaction2.setName(flowName);
 		transaction2.setFlowName(flowName);
@@ -55,6 +55,29 @@ public class TransactionUtils {
 		if (event != null)
 			return Optional.of(event.getCorrelationId());
 
+		Exception e = notification.getInfo().getException();
+		
+		Field f = null;
+		CoreEvent iWantThis = null;
+		try {
+			f = e.getClass().getDeclaredField("processedEvent");
+		} catch (NoSuchFieldException | SecurityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //NoSuchFieldException
+		f.setAccessible(true);
+		try {
+			iWantThis = (CoreEvent) f.get(e);
+		} catch (IllegalArgumentException | IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //IllegalAccessException
+		
+		if (iWantThis != null) {
+			String correlationId = iWantThis.getCorrelationId();
+			return Optional.of(correlationId);
+		}
+		
 		return Optional.empty();
 	}
 
@@ -77,7 +100,7 @@ public class TransactionUtils {
 
 		populateFinalTransactionDetails(transaction, notification);
 
-		transaction.end(getEventTimestamp(notification));
+		transaction.end();
 	}
 
 	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
@@ -98,10 +121,6 @@ public class TransactionUtils {
 			return true;
 
 		return false;
-	}
-
-	private static long getEventTimestamp(PipelineMessageNotification notification) {
-		return notification.getTimestamp() * 1_000;
 	}
 
 	private static void populateFinalTransactionDetails(Transaction transaction,

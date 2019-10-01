@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import co.elastic.apm.mule4.agent.config.BaseAbstractApmMuleTestCase;
 
-public class ExceptionFlowTest extends BaseAbstractApmMuleTestCase {
+public class ErrorFlowTest extends BaseAbstractApmMuleTestCase {
 
 	@Test
 	public void testSimpleFlow() throws Exception {

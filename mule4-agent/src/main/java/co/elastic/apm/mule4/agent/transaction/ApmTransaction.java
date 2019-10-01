@@ -1,5 +1,9 @@
 package co.elastic.apm.mule4.agent.transaction;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import co.elastic.apm.api.HeaderInjector;
 import co.elastic.apm.api.Scope;
 import co.elastic.apm.api.Span;
@@ -9,6 +13,7 @@ public class ApmTransaction implements Transaction {
 
 	private Transaction tx;
 	private String flowName;
+	private Map<String, String> labels = new ConcurrentHashMap<String, String>();
 
 	public ApmTransaction(Transaction transaction) {
 		this.tx = transaction;
@@ -28,7 +33,14 @@ public class ApmTransaction implements Transaction {
 	}
 
 	public Transaction addLabel(String key, String value) {
+
+		labels.put(key, value);
+
 		return tx.addLabel(key, value);
+	}
+
+	public Optional<String> getLabel(String key) {
+		return Optional.ofNullable(labels.get(key));
 	}
 
 	public Transaction addLabel(String key, Number value) {
@@ -119,7 +131,5 @@ public class ApmTransaction implements Transaction {
 	public void setFlowName(String flowName) {
 		this.flowName = flowName;
 	}
-
-
 
 }
