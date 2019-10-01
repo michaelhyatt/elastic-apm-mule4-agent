@@ -1,7 +1,10 @@
 package co.elastic.apm.mule4.agent;
 
-
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -12,18 +15,17 @@ public class ParallelFlowTest extends BaseAbstractApmMuleTestCase {
 	@Test
 	public void testSimpleFlow() throws Exception {
 		flowRunner("ParallelFlowTest").run();
-		
+
 		Thread.sleep(1000);
-		
+
 		assertEquals("ParallelFlowTest", getTransaction().getNameAsString());
 		assertEquals(9, getSpans().size());
 		assertEquals("Logger1", getSpans().get(0).getNameAsString());
-		assertEquals("Logger21", getSpans().get(1).getNameAsString());
-		assertEquals("Logger22", getSpans().get(2).getNameAsString());
-		assertEquals("Logger31", getSpans().get(3).getNameAsString());
-		assertEquals("Logger23", getSpans().get(4).getNameAsString());
-		assertEquals("Logger32", getSpans().get(5).getNameAsString());
-		assertEquals("Logger41", getSpans().get(6).getNameAsString());
+
+		assertArrayEquals(Arrays.asList("Logger21", "Logger22", "Logger23", "Logger31", "Logger32").toArray(),
+				getSpans().subList(1, 6).stream().map(x -> x.getNameAsString()).sorted().collect(Collectors.toList())
+						.toArray());
+
 		assertEquals("Scatter-Gather", getSpans().get(7).getNameAsString());
 		assertEquals("Logger5", getSpans().get(8).getNameAsString());
 	}
@@ -32,5 +34,5 @@ public class ParallelFlowTest extends BaseAbstractApmMuleTestCase {
 	protected String getConfigFile() {
 		return "ParallelFlowTest.xml";
 	}
-	
+
 }
