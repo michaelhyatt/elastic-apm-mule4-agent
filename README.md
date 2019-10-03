@@ -49,7 +49,7 @@ Pass the configuraion parameters in command line arguments section of `Run Confi
 ## Test projects
 ### dep-test
 #### Mule flow
-The `dep-test` folder in this repo contains a sample test project configured to work with Elastic APM agent for Mule 4 and containing the flow below.
+The `dep-test` folder in this repo contains a sample test project configured to work with Elastic APM agent for Mule 4 and containing the flow below. Note the last logger in the topmost flow didn't run due to exception thrown by the Execute step denoted as red square.
 ![dep-test-flow](images/dep-test-flow.png)
 #### The above flow should produce APM transaction similar to this:
 ![dep-test-apm](images/dep-test-apm.png)
