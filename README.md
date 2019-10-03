@@ -48,12 +48,13 @@ Pass the configuraion parameters in command line arguments section of `Run Confi
 ![Anypoint Run Configuration](images/config-dialog.png)
 ## Test projects
 ### dep-test
+#### Mule flow
 The `dep-test` folder in this repo contains a sample test project configured to work with Elastic APM agent for Mule 4 and containing the flow below.
 ![dep-test-flow](images/dep-test-flow.png)
-The above flow should produce APM transaction similar to this:
+#### The above flow should produce APM transaction similar to this:
 ![dep-test-apm](images/dep-test-apm.png)
-The agent also captures exceptions thrown in Mule:
+#### The agent also captures exceptions thrown in Mule:
 ![error1](images/error1.png)
-![error1](images/error2.png)
+#### Metrics
 Elastic Java APM agent also captures JVM metrics, so all the Mule JVM metrics collected by the agent are there as well:
-![metrics](images/metrics.png) 
+![metrics](images/metrics.png)
