@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>co.elastic.apm</groupId>
 			<artifactId>mule4-agent</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.2</version>
 		</dependency>
         <dependency>
 			<groupId>org.mule.connectors</groupId>
