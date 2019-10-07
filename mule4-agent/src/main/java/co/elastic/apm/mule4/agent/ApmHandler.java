@@ -15,12 +15,17 @@ import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
+/*
+ * Adapter called by flow event handlers and flow process step interceptors
+ */
 public class ApmHandler {
 
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
 
+	// Store for all active transactions in flight.
 	private TransactionStore transactionStore = new TransactionStore();
 
+	// What to invoke when Mule process step starts.
 	public Span handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
 			InterceptionEvent event) {
 		logger.trace("Handling start event");
@@ -28,6 +33,7 @@ public class ApmHandler {
 		return SpanUtils.startSpan(transactionStore, location, parameters, event);
 	}
 
+	// What to invoke when Mule process step ends.
 	public void handleProcessorEndEvent(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 		logger.trace("Handling end event");
@@ -35,6 +41,7 @@ public class ApmHandler {
 		SpanUtils.endSpan(span, location, parameters, event);
 	}
 
+	// What to invoke when an Exception thrown in the Mule flow.
 	public void handleExceptionEvent(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
 		logger.trace("Handling exception event");
@@ -42,6 +49,7 @@ public class ApmHandler {
 		ExceptionUtils.captureException(span, transactionStore, location, parameters, event, ex);
 	}
 
+	// What to invoke when Mule flow starts execution.
 	public void handleFlowStartEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow start event");
 
@@ -50,6 +58,7 @@ public class ApmHandler {
 
 	}
 
+	// What to invoke when Mule flow completes execution.
 	public void handleFlowEndEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow end event");
 

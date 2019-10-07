@@ -9,6 +9,9 @@ import co.elastic.apm.api.Scope;
 import co.elastic.apm.api.Span;
 import co.elastic.apm.api.Transaction;
 
+/*
+ * Wrapper class around APM Transaction to allow retrieval of some of the setter-only attributes.
+ */
 public class ApmTransaction implements Transaction {
 
 	private Transaction tx;
@@ -32,6 +35,10 @@ public class ApmTransaction implements Transaction {
 		return tx.addTag(key, value);
 	}
 
+	/*
+	 * Custom setter to record custom label settings
+	 * @see co.elastic.apm.api.Transaction#addLabel(java.lang.String, java.lang.String)
+	 */
 	public Transaction addLabel(String key, String value) {
 
 		labels.put(key, value);
@@ -39,6 +46,7 @@ public class ApmTransaction implements Transaction {
 		return tx.addLabel(key, value);
 	}
 
+	// Return custom set label
 	public Optional<String> getLabel(String key) {
 		return Optional.ofNullable(labels.get(key));
 	}
@@ -124,10 +132,16 @@ public class ApmTransaction implements Transaction {
 		tx.injectTraceHeaders(headerInjector);
 	}
 
+	/*
+	 * Custom getter for the flowName
+	 */
 	public String getFlowName() {
 		return flowName;
 	}
 
+	/*
+	 * Custom setter for the flowName
+	 */
 	public void setFlowName(String flowName) {
 		this.flowName = flowName;
 	}

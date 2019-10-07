@@ -10,26 +10,43 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
 
+/*
+ * Handling of Transaction starts and ends
+ */
 public class TransactionUtils {
 
+	/*
+	 * Is this notification related to newly started flow, i.e. there is no
+	 * transaction yet in the transactionStore?
+	 */
 	public static boolean isFirstEvent(TransactionStore transactionStore, PipelineMessageNotification notification) {
 		return !transactionStore.isTransactionPresent(getTransactionId(notification).get());
 	}
 
+	/*
+	 * Start transaction
+	 */
 	public static void startTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
 		Transaction transaction;
 
+		// Check if it has parent trace-id setting, or should be started as brand new
+		// transaction.
 		if (hasRemoteParent(notification))
 			transaction = ElasticApm.startTransactionWithRemoteParent(x -> getHeaderExtractor(x, notification));
 		else {
 			transaction = ElasticApm.startTransaction();
+			// TODO: Check if ensuring parent-id is required.
 			// transaction.ensureParentId();
 		}
 
+		// Once created, store the transaction in the store.
 		transactionStore.storeTransaction(getTransactionId(notification).get(),
 				populateTransactionDetails(transaction, notification));
 	}
 
+	/*
+	 * Capture all relevant transaction details.
+	 */
 	private static Transaction populateTransactionDetails(Transaction transaction,
 			PipelineMessageNotification notification) {
 
@@ -41,6 +58,10 @@ public class TransactionUtils {
 
 		transaction2.setType(Transaction.TYPE_REQUEST);
 
+		// TODO: investigate population of transaction start from the external
+		// parameters.
+		// transaction.setStartTimestamp(epochMicros);
+
 		return transaction2;
 	}
 
@@ -48,6 +69,10 @@ public class TransactionUtils {
 		return notification.getResourceIdentifier();
 	}
 
+	/*
+	 * Retrieve the transactionId by getting the attached event to pipeline
+	 * notification or exception
+	 */
 	private static Optional<String> getTransactionId(PipelineMessageNotification notification) {
 
 		Event event = notification.getEvent();
@@ -55,44 +80,60 @@ public class TransactionUtils {
 		if (event != null)
 			return Optional.of(event.getCorrelationId());
 
+		// If the event == null, this must be the case of an exception and the original
+		// event is attached under processedEvent in the exception.
 		Exception e = notification.getInfo().getException();
-		
+
+		// This is a really ugly hack to get around the fact that
+		// org.mule.runtime.core.internal.exception.MessagingException class is not
+		// visible in the current classloader and there is no documentation to explain
+		// how to access objects of this class and why the hell it is internal and is
+		// not part of the API.
+		// TODO: raise why org.mule.runtime.core.internal.exception.MessagingException
+		// is not part of the API with Mule support.
 		Field f = null;
 		CoreEvent iWantThis = null;
 		try {
 			f = e.getClass().getDeclaredField("processedEvent");
 		} catch (NoSuchFieldException | SecurityException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} //NoSuchFieldException
+		} // NoSuchFieldException
 		f.setAccessible(true);
 		try {
 			iWantThis = (CoreEvent) f.get(e);
 		} catch (IllegalArgumentException | IllegalAccessException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} //IllegalAccessException
-		
+		} // IllegalAccessException
+
 		if (iWantThis != null) {
 			String correlationId = iWantThis.getCorrelationId();
 			return Optional.of(correlationId);
 		}
-		
+
 		return Optional.empty();
 	}
 
 	private static String getHeaderExtractor(String x, PipelineMessageNotification notification) {
-		// TODO Auto-generated method stub
+		// TODO provide parent trace info header extractor to support distributed
+		// transactions
 		return null;
 	}
 
 	private static boolean hasRemoteParent(PipelineMessageNotification notification) {
-		// TODO Auto-generated method stub
+		// TODO Determine if the notification was published for a request with remote
+		// parent information.
 		return false;
 	}
 
+	/*
+	 * End transaction.
+	 */
 	public static void endTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
 
+		// We only create and end transactions related to the top level flow. All the
+		// rest of the flows invoked through flow-ref are not represented as
+		// transactions and ignored. Only the corresponding flow-ref step is represented
+		// as Span.
 		if (!isEndOfTopFlow(transactionStore, notification))
 			return;
 
@@ -126,6 +167,9 @@ public class TransactionUtils {
 	private static void populateFinalTransactionDetails(Transaction transaction,
 			PipelineMessageNotification notification) {
 		// Noop
+		// TODO: Populate the output properties
+		// TODO: Populate final flowVars
+		// TODO: Populate the transaction status
 	}
 
 }
