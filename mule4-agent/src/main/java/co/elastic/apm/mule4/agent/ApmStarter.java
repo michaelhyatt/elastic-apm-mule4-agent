@@ -19,13 +19,16 @@ public class ApmStarter {
 
 	private Logger logger = LoggerFactory.getLogger(ApmStarter.class);
 
+	/*
+	 * This class is instantiated from tracer.xml to initialise Elastic Java APM agent.
+	 */
 	public ApmStarter() {
 
 		logger.debug("Initialising Elastic Java APM agent");
 
 		logger.debug("Elastic APM system properties set:");
 
-		// Ensure not to autoinstrument
+		// Ensure not to auto-instrument. This will override elastic.apm.instrument set through other mechanisms to avoid normal Java APM agents autodetection.
 		System.setProperty("elastic.apm.instrument", "false");
 
 		Supplier<Stream<Entry<Object, Object>>> apmPropertiesFilter = () -> System.getProperties().entrySet().stream()
@@ -38,6 +41,7 @@ public class ApmStarter {
 		Map<String, String> configMap = apmPropertiesFilter.get().collect(
 				Collectors.toMap(k -> k.getKey().toString().replace(ELASTIC_APM, ""), v -> v.getValue().toString()));
 
+		// Initialise and attach Java APM agent.
 		ElasticApmAttacher.attach(configMap);
 
 	}

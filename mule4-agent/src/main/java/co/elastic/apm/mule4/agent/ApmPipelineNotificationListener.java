@@ -5,6 +5,9 @@ import org.mule.runtime.api.notification.PipelineMessageNotificationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * Listener for Mule notifications on flow start, end and completion.
+ */
 public class ApmPipelineNotificationListener
 		implements PipelineMessageNotificationListener<PipelineMessageNotification> {
 
@@ -21,11 +24,14 @@ public class ApmPipelineNotificationListener
 	public void onNotification(PipelineMessageNotification notification) {
 		logger.debug("===> Received " + notification.getClass().getName() + ":" + notification.getActionName());
 
+		// Event listener
+		// TODO: refactor to remove the deprecation warning.
 		switch (notification.getAction().getActionId()) {
 		case PipelineMessageNotification.PROCESS_START:
 			apmHandler.handleFlowStartEvent(notification);
 			break;
 
+		// On exception this event doesn't fire, only on successful flow completion.
 		case PipelineMessageNotification.PROCESS_END:
 			break;
 			

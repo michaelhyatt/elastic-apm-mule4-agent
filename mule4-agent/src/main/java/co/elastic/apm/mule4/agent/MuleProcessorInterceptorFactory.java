@@ -11,6 +11,9 @@ import org.mule.runtime.core.api.context.notification.ServerNotificationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * This is ProcessorInterceptorFactory API to intercept flow step execution.
+ */ 
 public class MuleProcessorInterceptorFactory implements ProcessorInterceptorFactory {
 
 	@Inject
@@ -18,6 +21,9 @@ public class MuleProcessorInterceptorFactory implements ProcessorInterceptorFact
 
 	private Logger logger = LoggerFactory.getLogger(MuleProcessorInterceptorFactory.class);
 
+	/*
+	 * Creation of flow interceptors is done with a byproduct of only-once instantiation of flow listeners.
+	 */
 	@Override
 	public ProcessorInterceptor get() {
 		ApmHandler apmHandler = registry.lookupByType(ApmHandler.class).get();
@@ -27,10 +33,12 @@ public class MuleProcessorInterceptorFactory implements ProcessorInterceptorFact
 		return new MuleProcessorInterceptor(apmHandler);
 	}
 
+	// Setup a singleton flow event listener once.
+	// TODO: find a away to do it in the tracer.xml
 	private void setupPipelineListener(ApmHandler apmHandler) {
 		ServerNotificationManager notificationManager = registry.lookupByType(ServerNotificationManager.class).get();
 
-		// Register only once
+		// Register only once, check if hasn't been registered before.
 		synchronized (notificationManager) {
 			if (notificationManager.getListeners().stream()
 					.anyMatch(x -> x.getListener().getClass() == ApmPipelineNotificationListener.class))
