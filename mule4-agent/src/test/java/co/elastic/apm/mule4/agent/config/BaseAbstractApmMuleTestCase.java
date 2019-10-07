@@ -43,12 +43,16 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	public void doSetUpBeforeMuleContextCreation() {
 
 		reporter = Mockito.mock(Reporter.class);
-		
+
 		Mockito.doAnswer(new Answer<Span>() {
 			@Override
 			public Span answer(InvocationOnMock invocation) throws Throwable {
-				Span argument = invocation.getArgument(0, Span.class);
-				spans.add(argument);
+
+				synchronized (spans) {
+					Span argument = invocation.getArgument(0, Span.class);
+					spans.add(argument);
+				}
+
 				return null;
 			}
 		}).when(reporter).report(Mockito.any(Span.class));

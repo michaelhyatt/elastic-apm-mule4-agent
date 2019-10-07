@@ -21,13 +21,15 @@ public class ParallelFlowTest extends BaseAbstractApmMuleTestCase {
 		assertEquals("ParallelFlowTest", getTransaction().getNameAsString());
 		assertEquals(9, getSpans().size());
 		assertEquals("Logger1", getSpans().get(0).getNameAsString());
-
-		assertArrayEquals(Arrays.asList("Logger21", "Logger22", "Logger23", "Logger31", "Logger32").toArray(),
-				getSpans().subList(1, 6).stream().map(x -> x.getNameAsString()).sorted().collect(Collectors.toList())
-						.toArray());
-
 		assertEquals("Scatter-Gather", getSpans().get(7).getNameAsString());
 		assertEquals("Logger5", getSpans().get(8).getNameAsString());
+
+		assertArrayEquals(
+				Arrays.asList("Logger21", "Logger22", "Logger23", "Logger31", "Logger32", "Logger41").stream().sorted()
+						.collect(Collectors.toList()).toArray(),
+				getSpans().subList(1, 7).stream().map(x -> x.getNameAsString()).sorted().collect(Collectors.toList())
+						.toArray());
+
 	}
 
 	@Override
