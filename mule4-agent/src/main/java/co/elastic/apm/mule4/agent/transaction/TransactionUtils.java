@@ -40,7 +40,6 @@ public class TransactionUtils {
 			transaction = ElasticApm.startTransactionWithRemoteParent(x -> headerExtractor(x, notification));
 		else {
 			transaction = ElasticApm.startTransaction();
-			transaction.ensureParentId();
 		}
 
 		// Once created, store the transaction in the store.
