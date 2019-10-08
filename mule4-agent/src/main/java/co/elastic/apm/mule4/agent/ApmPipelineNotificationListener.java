@@ -19,26 +19,23 @@ public class ApmPipelineNotificationListener
 		this.apmHandler = apmHandler;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onNotification(PipelineMessageNotification notification) {
 		logger.debug("===> Received " + notification.getClass().getName() + ":" + notification.getActionName());
 
 		// Event listener
-		// TODO: refactor to remove the deprecation warning.
-		switch (notification.getAction().getActionId()) {
-		case PipelineMessageNotification.PROCESS_START:
+		String identifier = notification.getAction().getIdentifier();
+
+		if (String.valueOf(PipelineMessageNotification.PROCESS_START).equals(identifier))
 			apmHandler.handleFlowStartEvent(notification);
-			break;
 
 		// On exception this event doesn't fire, only on successful flow completion.
-		case PipelineMessageNotification.PROCESS_END:
-			break;
-			
-		case PipelineMessageNotification.PROCESS_COMPLETE:
+		// else if (identifier ==
+		// String.valueOf(PipelineMessageNotification.PROCESS_END)
+
+		else if (String.valueOf(PipelineMessageNotification.PROCESS_COMPLETE).equals(identifier))
 			apmHandler.handleFlowEndEvent(notification);
-			break;
-		}
+
 	}
 
 }
