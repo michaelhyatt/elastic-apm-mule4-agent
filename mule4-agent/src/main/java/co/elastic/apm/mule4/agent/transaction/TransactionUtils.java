@@ -3,7 +3,10 @@ package co.elastic.apm.mule4.agent.transaction;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.event.Event;
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.mule.runtime.core.api.event.CoreEvent;
 
@@ -14,6 +17,8 @@ import co.elastic.apm.api.Transaction;
  * Handling of Transaction starts and ends
  */
 public class TransactionUtils {
+
+	public static final String ELASTIC_APM_TRACEPARENT = "elastic-apm-traceparent";
 
 	/*
 	 * Is this notification related to newly started flow, i.e. there is no
@@ -32,11 +37,10 @@ public class TransactionUtils {
 		// Check if it has parent trace-id setting, or should be started as brand new
 		// transaction.
 		if (hasRemoteParent(notification))
-			transaction = ElasticApm.startTransactionWithRemoteParent(x -> getHeaderExtractor(x, notification));
+			transaction = ElasticApm.startTransactionWithRemoteParent(x -> headerExtractor(x, notification));
 		else {
 			transaction = ElasticApm.startTransaction();
-			// TODO: Check if ensuring parent-id is required.
-			// transaction.ensureParentId();
+			transaction.ensureParentId();
 		}
 
 		// Once created, store the transaction in the store.
@@ -113,16 +117,43 @@ public class TransactionUtils {
 		return Optional.empty();
 	}
 
-	private static String getHeaderExtractor(String x, PipelineMessageNotification notification) {
-		// TODO provide parent trace info header extractor to support distributed
-		// transactions
+	private static String headerExtractor(String x, PipelineMessageNotification notification) {
+
+		Event event = notification.getInfo().getEvent();
+
+		if (event == null)
+			return null;
+
+		TypedValue<Object> attributes = event.getMessage().getAttributes();
+		DataType type = attributes.getDataType();
+
+		// Handle HTTP context propagation
+		if (type.getType() == HttpRequestAttributes.class)
+			return getHttpTraceHeaderValue(attributes).get();
+
 		return null;
 	}
 
 	private static boolean hasRemoteParent(PipelineMessageNotification notification) {
-		// TODO Determine if the notification was published for a request with remote
-		// parent information.
+
+		Event event = notification.getInfo().getEvent();
+
+		if (event == null)
+			return false;
+
+		TypedValue<Object> attributes = event.getMessage().getAttributes();
+		DataType type = attributes.getDataType();
+
+		// Handle HTTP context propagation
+		if (type.getType() == HttpRequestAttributes.class)
+			return getHttpTraceHeaderValue(attributes).isPresent();
+
 		return false;
+	}
+
+	private static Optional<String> getHttpTraceHeaderValue(TypedValue<Object> attributes) {
+		HttpRequestAttributes httpRequestAttributes = (HttpRequestAttributes) attributes.getValue();
+		return Optional.ofNullable(httpRequestAttributes.getHeaders().get(ELASTIC_APM_TRACEPARENT));
 	}
 
 	/*
