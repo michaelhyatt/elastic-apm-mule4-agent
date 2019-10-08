@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
 	<import doc:name="Import" doc:id="95b192c2-3b4e-4d27-b843-3e0b09beec87"
 		file="test-tracer.xml" />
 
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7b312a7c-55d1-48fd-a53a-5599524fe5b9" >
-		<http:listener-connection host="127.0.0.1" port="8887" />
+		<http:listener-connection host="127.0.0.1" port="8889" />
 	</http:listener-config>
-	<flow name="DistributedTracingHTTPHeaderClient" doc:id="2674102b-2c5f-4824-9851-edbe7ca9aeff" >
-		<http:request method="GET" doc:name="Request" doc:id="01f3767d-5236-4f75-a66d-f2c0fdb6d143" url="http://127.0.0.1/"/>
-	</flow>
+
 	<flow name="Test" doc:id="fed22919-43df-49a6-bb24-74a7d54d47c5" >
 		<http:listener doc:name="Listener" doc:id="d25889fc-88a1-4669-aa4e-53be68e4e084" config-ref="HTTP_Listener_config" path="/"/>
-		<logger level="INFO" doc:name="Logger" doc:id="de2dc186-f80b-4b70-aa6c-88f6fcb5214a" message="zzz"/>
+		<logger level="WARN" doc:name="Logger" doc:id="de2dc186-f80b-4b70-aa6c-88f6fcb5214a" message='#[attributes.headers."elastic-apm-traceparent"]'/>
+		<set-payload value="#[123]" doc:name="Set Payload" doc:id="25137406-9042-4cca-a4c2-347772c64b96" />
 	</flow>
 </mule>

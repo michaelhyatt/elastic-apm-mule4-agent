@@ -97,6 +97,20 @@
 			<classifier>mule-service</classifier>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.services</groupId>
+			<artifactId>mule-service-weave-ee</artifactId>
+			<version>2.2.0</version>
+			<classifier>mule-service</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.services</groupId>
+			<artifactId>mule-service-weave</artifactId>
+			<version>2.2.0</version>
+			<classifier>mule-service</classifier>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- Mule Runtime dependencies -->
 		<dependency>
@@ -108,6 +122,12 @@
 		<dependency>
 			<groupId>org.mule.runtime</groupId>
 			<artifactId>mule-core</artifactId>
+			<version>4.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.mule.runtime</groupId>
+			<artifactId>mule-core-ee</artifactId>
 			<version>4.2.1</version>
 			<scope>provided</scope>
 		</dependency>
