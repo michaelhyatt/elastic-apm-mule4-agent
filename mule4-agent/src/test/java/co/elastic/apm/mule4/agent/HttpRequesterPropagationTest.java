@@ -42,7 +42,7 @@ public class HttpRequesterPropagationTest extends BaseAbstractApmMuleTestCase {
 		Map<String, TypedValue<?>> variables = result.getVariables();
 		
 		assertEquals("value", variables.get("this-is-just-a-var").getValue());
-		assertEquals(32, variables.get("elastic-apm-trace-id").getValue().toString().length());
+		assertEquals(55, variables.get("elastic-apm-traceparent").getValue().toString().length());
 		
 		assertEquals("TestMyHeaderFlow", getTransaction().getNameAsString());
 		assertEquals(3, getSpans().size());

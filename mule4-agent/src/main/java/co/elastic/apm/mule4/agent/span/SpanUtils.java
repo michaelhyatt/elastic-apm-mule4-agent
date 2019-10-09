@@ -18,10 +18,9 @@ import co.elastic.apm.mule4.agent.transaction.TransactionStore;
  */
 public class SpanUtils {
 
+	private static final String REQUEST_BUILDER_PARAM = "requestBuilder";
 	private static final String HTTP_REQUEST_ACTIVITY_NAMESPACE = "http";
 	private static final String HTTP_REQUEST_ACTIVITY_NAME = "request";
-
-	private static final String ELASTIC_APM_TRACE_ID_VAR_NAME = "elastic-apm-trace-id";
 
 	private static final String SUBTYPE = "mule-step";
 	private static final String DOC_NAME = "doc:name";
@@ -41,7 +40,7 @@ public class SpanUtils {
 
 		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
 
-		populateTraceIdFlowVariable(event, transaction);
+		populateTraceIdFlowVariable(span, event, transaction);
 
 		propagateTracingContext(span, location, parameters, event);
 
@@ -63,14 +62,17 @@ public class SpanUtils {
 		// TODO Add support for more protocols and activities
 		// Create HTTP header for http activities
 		if (HTTP_REQUEST_ACTIVITY_NAME.equals(component) && HTTP_REQUEST_ACTIVITY_NAMESPACE.equals(type))
-			span.injectTraceHeaders((name, value) -> {
-				ProcessorParameterValue processorParameterValue = parameters.get("requestBuilder");
-				HttpRequesterRequestBuilder httpRequesterRequestBuilder = (HttpRequesterRequestBuilder) processorParameterValue.resolveValue();
-				MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
-				headers.put(name, value);
-				httpRequesterRequestBuilder.setHeaders(headers);
-			});
+			span.injectTraceHeaders((name, value) -> addTraceHttpHeader(name, value, parameters));
 
+	}
+
+	private static void addTraceHttpHeader(String name, String value, Map<String, ProcessorParameterValue> parameters) {
+		ProcessorParameterValue processorParameterValue = parameters.get(REQUEST_BUILDER_PARAM);
+		HttpRequesterRequestBuilder httpRequesterRequestBuilder = (HttpRequesterRequestBuilder) processorParameterValue
+				.resolveValue();
+		MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
+		headers.put(name, value);
+		httpRequesterRequestBuilder.setHeaders(headers);
 	}
 
 	/*
@@ -78,10 +80,12 @@ public class SpanUtils {
 	 * context for client flow steps where trace context propagation is not
 	 * happening automatically.
 	 */
-	private static void populateTraceIdFlowVariable(InterceptionEvent event, Transaction transaction) {
+	private static void populateTraceIdFlowVariable(Span span, InterceptionEvent event, Transaction transaction) {
 		// Create trace-id flowVar
-		if (!event.getVariables().containsKey(ELASTIC_APM_TRACE_ID_VAR_NAME))
-			event.addVariable(ELASTIC_APM_TRACE_ID_VAR_NAME, transaction.getTraceId());
+		span.injectTraceHeaders((name, value) -> {
+			if (!event.getVariables().containsKey(name))
+				event.addVariable(name, value);
+		});
 	}
 
 	/*
