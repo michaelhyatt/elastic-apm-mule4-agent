@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<import doc:name="Import" doc:id="574d9df5-5b2d-4b5c-8d87-ab3148836056"
+		file="test-tracer.xml" />
+
+	<flow name="TestMyHeaderFlow" doc:id="95af6ad1-116a-4ef2-b7b1-ab121574b28e">
+		<set-variable value="value" doc:name="Set Variable" doc:id="22b37cef-2adc-4cae-975c-5a62e464a38f" variableName="this-is-just-a-var"/>
+		<http:request method="GET" doc:name="Request"
+			doc:id="0c5dcdba-78ac-4023-a53b-7922b87af27b" url="http://127.0.0.1:8889/" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"myotherheader" : vars['this-is-just-a-var'],
+	"myheader" : vars['elastic-apm-trace-id']
+}]]]></http:headers>
+		</http:request>
+		<logger level="WARN" doc:name="Logger" doc:id="3939e65c-b7e7-4847-bb53-78b9637aeb76" message="#[vars]"/>
+	</flow>
+</mule>

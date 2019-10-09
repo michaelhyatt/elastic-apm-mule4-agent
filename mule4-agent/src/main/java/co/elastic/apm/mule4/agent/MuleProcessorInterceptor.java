@@ -43,7 +43,7 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 
 		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
 
-		// Completeable future handling exception and completion of the step.
+		// CompletableFuture handling exception and completion of the step.
 		return action.proceed().exceptionally(ex -> {
 
 			// Flow step threw an Exception
