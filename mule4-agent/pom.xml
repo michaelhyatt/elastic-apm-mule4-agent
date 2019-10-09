@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.elastic.apm</groupId>
 	<artifactId>mule4-agent</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>Elastic Mule 4 APM agent</name>
 	<description>Elastic Mule 4 APM agent</description>
 	<packaging>jar</packaging>
@@ -113,6 +113,13 @@
 		</dependency>
 
 		<!-- Mule Runtime dependencies -->
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.5.3</version>
+			<classifier>mule-plugin</classifier>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.mule.runtime</groupId>
 			<artifactId>mule-api</artifactId>
