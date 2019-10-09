@@ -2,9 +2,12 @@ package co.elastic.apm.mule4.agent.span;
 
 import java.util.Map;
 
+import org.mule.extension.http.api.request.builder.HttpRequesterRequestBuilder;
+import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
+import org.mule.runtime.api.util.MultiMap;
 
 import co.elastic.apm.api.Span;
 import co.elastic.apm.api.Transaction;
@@ -14,6 +17,10 @@ import co.elastic.apm.mule4.agent.transaction.TransactionStore;
  * Creation and ending of APM Spans.
  */
 public class SpanUtils {
+
+	private static final String HTTP_REQUEST_ACTIVITY_NAMESPACE = "http";
+	private static final String HTTP_REQUEST_ACTIVITY_NAME = "request";
+
 	private static final String ELASTIC_APM_TRACE_ID_VAR_NAME = "elastic-apm-trace-id";
 
 	private static final String SUBTYPE = "mule-step";
@@ -34,14 +41,47 @@ public class SpanUtils {
 
 		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
 
-		
-		// Create trace-id flowVar
-		if (!event.getVariables().containsKey(ELASTIC_APM_TRACE_ID_VAR_NAME)) 
-			event.addVariable(ELASTIC_APM_TRACE_ID_VAR_NAME, transaction.getTraceId());
+		populateTraceIdFlowVariable(event, transaction);
+
+		propagateTracingContext(span, location, parameters, event);
 
 		setSpanDetails(span, location, parameters, event);
 
 		return span;
+	}
+
+	/*
+	 * Propagate transaction context to external components
+	 */
+	private static void propagateTracingContext(Span span, ComponentLocation location,
+			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
+
+		ComponentIdentifier identifier = location.getComponentIdentifier().getIdentifier();
+		String component = identifier.getName();
+		String type = identifier.getNamespace();
+
+		// TODO Add support for more protocols and activities
+		// Create HTTP header for http activities
+		if (HTTP_REQUEST_ACTIVITY_NAME.equals(component) && HTTP_REQUEST_ACTIVITY_NAMESPACE.equals(type))
+			span.injectTraceHeaders((name, value) -> {
+				ProcessorParameterValue processorParameterValue = parameters.get("requestBuilder");
+				HttpRequesterRequestBuilder httpRequesterRequestBuilder = (HttpRequesterRequestBuilder) processorParameterValue.resolveValue();
+				MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
+				headers.put(name, value);
+				httpRequesterRequestBuilder.setHeaders(headers);
+			});
+
+	}
+
+	/*
+	 * Populate flow variable with trace id to be used to manually propagate trace
+	 * context for client flow steps where trace context propagation is not
+	 * happening automatically.
+	 */
+	private static void populateTraceIdFlowVariable(InterceptionEvent event, Transaction transaction) {
+		// Create trace-id flowVar
+		if (!event.getVariables().containsKey(ELASTIC_APM_TRACE_ID_VAR_NAME))
+			event.addVariable(ELASTIC_APM_TRACE_ID_VAR_NAME, transaction.getTraceId());
 	}
 
 	/*
