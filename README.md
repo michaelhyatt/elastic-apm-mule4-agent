@@ -3,10 +3,11 @@
 Until version 1, the agent is considered work in progress, where some of the features may be broken or missing. Please feel free to download the agent, raise issues, test and contribute to make it better.
 ### Work in progress
 These items are still missing and still need to be developed:
-* Distributed tracing with HTTP.
+* ~Distributed tracing with HTTP.~
 * Generic distributed tracing for non-HTTP protocols.
 * Capturing flow variables and properties in the flow.
-* Documentation.
+* ~Documentation.~
+* Mule domain projects support.
 
 ## Overview
 The agent allows tracking the timing of Mule flow steps executions and captures data, metrics and exceptions raised in Mule flows. It is included as Maven dependency and is instantiated in the flow. The data collected by the agent is stored in Elasticsearch and can be visualised in Kibana in a way compatible with the rest of Elastic APM stack. This allows Mule 4 components to be monitored and profiled alongside other technologies in [Elastic APM](https://www.elastic.co/products/apm). The agent is built using [Elastic Java APM agent](https://www.elastic.co/guide/en/apm/agent/java/1.x/index.html) and is compatible with Java APM agent [configuration options](https://www.elastic.co/guide/en/apm/agent/java/1.x/configuration.html).
@@ -46,7 +47,20 @@ It is also possible to use property file based configuration by specifying the l
 ### Anypoint Studio
 Pass the configuraion parameters in command line arguments section of `Run Configurations...` dialog, as per the image below.
 ![Anypoint Run Configuration](images/config-dialog.png)
+## Distributed tracing support
+### HTTP listener
+If the incoming HTTP request contains the standard `elastic-apm-traceparent` HTTP header, the top level transaction created for the top level flow will be made part of the overall distributed trace and will be annotated with the same `trace.id` as the rest of the transactions belonging to the same trace.
+### HTTP requester
+Default Mule HTTP requesters will propagate the trace information and the outgoing HTTP requests will contain the `elastic-apm-traceparent` HTTP header automatically.
+### Manual trace context propagation
+The APM agent will create a flow variable called `elastic-apm-traceparent` that can be used in the flow to propagate trace context for non-HTTP protocols used by other Mule connectors, such as JMS, Kafka, etc. This flow variable will need to be mapped into a specific data field of the transport protocol, such as JMS header, to be propagated to another external component that participate in the distributed trace.
 ## Test projects
+### distributed-tracing
+Project illustrating distributed tracing between two Mule components using `docker` and `docker-compose` with self-contained Elastic Stack (Elasticsearch, Kibana, APM server, heartbeat).
+#### Running the project
+TBD
+#### Screenshots
+TBD
 ### dep-test
 #### Mule flow
 The `dep-test` folder in this repo contains a sample test project configured to work with Elastic APM agent for Mule 4 and containing the flow below. Note the last logger in the topmost flow didn't run due to exception thrown by the Execute step denoted as red square.
