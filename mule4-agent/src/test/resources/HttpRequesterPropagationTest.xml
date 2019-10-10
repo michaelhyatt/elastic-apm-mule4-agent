@@ -16,8 +16,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"myotherheader" : vars['this-is-just-a-var'],
-	"myheader" : vars['elastic-apm-traceparent']
+	"myotherheader" : vars['this-is-just-a-var']
 }]]]></http:headers>
 		</http:request>
 		<logger level="WARN" doc:name="Logger" doc:id="3939e65c-b7e7-4847-bb53-78b9637aeb76" message="#[vars]"/>
