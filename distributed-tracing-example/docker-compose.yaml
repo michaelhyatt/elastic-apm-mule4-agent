@@ -1,13 +1,6 @@
 version: '3'
 services:
 
-  mule-base:
-    image: mule4-docker
-    container_name: mule-base
-    build:
-      context: docker
-    command: ["echo", "Base image doesn't need to run"]
-
   # Elastic stack
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${TAG}
@@ -45,8 +38,7 @@ services:
     image: mule4-docker:latest
     container_name: mule-component2
     depends_on:
-      - mule-base
-      # - apm-server
+      - apm-server
     networks:
       mule:
     ports:
@@ -65,8 +57,7 @@ services:
     image: mule4-docker:latest
     container_name: mule-component1
     depends_on:
-      - mule-base
-      # - apm-server
+      - apm-server
     networks:
       mule:
     ports:

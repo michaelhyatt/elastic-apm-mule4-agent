@@ -14,19 +14,49 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	</http:request-config>
 	<flow name="component1Flow" doc:id="2c67146e-c19f-483b-ad3b-35b103362235" >
 		<http:listener doc:name="Listener" doc:id="9d029156-ac24-416c-988d-a926ade97db6" config-ref="HTTP_Listener_config" path="/"/>
-		<http:request method="GET" doc:name="Request" doc:id="59828698-40fb-4b0c-90b0-85185d708bab" config-ref="HTTP_Request_configuration" path="/"/>
+		<http:request method="GET" doc:name="Request" doc:id="59828698-40fb-4b0c-90b0-85185d708bab" config-ref="HTTP_Request_configuration" path="/">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+}]]]></http:headers>
+		</http:request>
 		<set-payload value="123" doc:name="Set Payload" doc:id="03eb96b4-d33c-4151-8454-1da3bb378d4d" />
 		<scatter-gather doc:name="Scatter-Gather" doc:id="a61ab84e-57b9-4711-a21c-af0d60e5913c" >
 			<route >
-				<http:request method="GET" doc:name="Request" doc:id="e46cc7b0-223d-4080-b632-b4623943b821" config-ref="HTTP_Request_configuration" path="/"/>
+				<http:request method="GET" doc:name="Request" doc:id="e46cc7b0-223d-4080-b632-b4623943b821" config-ref="HTTP_Request_configuration" path="/">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+}]]]></http:headers>
+				</http:request>
 			</route>
 			<route >
-				<http:request method="GET" doc:name="Request" doc:id="8e1b6bd4-f726-4d29-a172-b9e4ee91cd40" config-ref="HTTP_Request_configuration" path="/"/>
+				<http:request method="GET" doc:name="Request" doc:id="8e1b6bd4-f726-4d29-a172-b9e4ee91cd40" config-ref="HTTP_Request_configuration" path="/">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+}]]]></http:headers>
+				</http:request>
 			</route>
 			<route >
-				<http:request method="GET" doc:name="Request" doc:id="9d8a08e0-41ee-4054-b5aa-8130bf791d66" config-ref="HTTP_Request_configuration" path="/"/>
+				<http:request method="GET" doc:name="Request" doc:id="9d8a08e0-41ee-4054-b5aa-8130bf791d66" config-ref="HTTP_Request_configuration" path="/">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+}]]]></http:headers>
+				</http:request>
 			</route>
 		</scatter-gather>
-		<http:request method="GET" doc:name="Request" doc:id="b2d836e5-d524-4ac8-af69-12eece6c9783" config-ref="HTTP_Request_configuration" path="/"/>
+		<http:request method="GET" doc:name="Request" doc:id="b2d836e5-d524-4ac8-af69-12eece6c9783" config-ref="HTTP_Request_configuration" path="/">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+}]]]></http:headers>
+		</http:request>
 	</flow>
 </mule>

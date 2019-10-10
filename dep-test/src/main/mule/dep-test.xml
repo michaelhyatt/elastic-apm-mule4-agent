@@ -33,6 +33,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	<flow name="dep-testFlow1" doc:id="b1a44825-594e-454c-bba8-a73beb6d3b4c">
 		<logger level="INFO" doc:name="Logger"
 			doc:id="8d245e86-ab3d-4f9b-bea5-687e74810f55" message="real flow" />
+		<http:request method="GET" doc:name="Request" doc:id="89ee931a-9d07-4a59-9546-af6ac9dc5a32" url="http://google.com" />
 		<scripting:execute engine="groovy" doc:name="Execute" doc:id="6d3eda0d-f4d5-4e19-8bde-3d317045804e" >
 			<scripting:code >def val = Math.abs(new Random().nextInt() % 10) + 1;
 
