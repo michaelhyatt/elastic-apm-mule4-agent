@@ -4,13 +4,13 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-<!-- 	<import file="tracer.xml"  doc:name="Import" doc:id="8f3b002d-e327-497d-a07d-47c97b524ba3" />
- -->
+ 	<import file="tracer.xml"  doc:name="Import" doc:id="8f3b002d-e327-497d-a07d-47c97b524ba3" />
+
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="00913dd9-b7d0-4c44-b31f-5ddac19c6ff0" >
 		<http:listener-connection host="0.0.0.0" port="8082" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b48bd404-e3db-467a-ac9a-22d6efa3268b" >
-		<http:request-connection host="${component2.host}" port="${component2.port}" />
+		<http:request-connection host="component2" port="8081" />
 	</http:request-config>
 	<flow name="component1Flow" doc:id="2c67146e-c19f-483b-ad3b-35b103362235" >
 		<http:listener doc:name="Listener" doc:id="9d029156-ac24-416c-988d-a926ade97db6" config-ref="HTTP_Listener_config" path="/"/>

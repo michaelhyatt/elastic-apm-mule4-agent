@@ -1,10 +1,11 @@
 version: '3'
 services:
 
-  base:
-    image: apm-mule3-agent:1.3.0
+  mule-base:
+    image: mule4-docker
+    container_name: mule-base
     build:
-      context: ..
+      context: docker
     command: ["echo", "Base image doesn't need to run"]
 
   # Elastic stack
@@ -41,40 +42,38 @@ services:
       - kibana
 
   component2:
-    build:
-      context: component2
+    image: mule4-docker:latest
+    container_name: mule-component2
     depends_on:
-      - base
-      - apm-server
+      - mule-base
+      # - apm-server
     networks:
       mule:
     ports:
-      - "8282:8282"
-    command: ["sh", "wait-for-apm-server.sh", "http://elasticsearch:9200","http://apm-server:8200", "/opt/mule/bin/mule-start.sh"]
+      - "8081:8081"
+    volumes:
+      - ./mule/component2/apps:/opt/mule/apps:rw
     environment:
-      - MULE_ENV_OVERRIDE_DEFAULT=0
-      - MULE_ENV=dev
       - ELASTIC_APM_SERVER_URLS=http://apm-server:8200
       - ELASTIC_APM_SERVICE_NAME=component2
       - ELASTIC_APM_SERVICE_VERSION=v1
       - ELASTIC_APM_ENVIRONMENT=dev
       # - ELASTIC_APM_LOG_LEVEL=DEBUG
 
+
   component1:
-    build:
-      context: component1
+    image: mule4-docker:latest
+    container_name: mule-component1
     depends_on:
-      - base
-      - apm-server
+      - mule-base
+      # - apm-server
     networks:
       mule:
-    container_name: component1
     ports:
-      - "8281:8281"
-    command: ["sh", "wait-for-apm-server.sh", "http://elasticsearch:9200","http://apm-server:8200", "/opt/mule/bin/mule-start.sh"]
+      - "8082:8082"
+    volumes:
+      - ./mule/component1/apps:/opt/mule/apps:rw
     environment:
-      - MULE_ENV_OVERRIDE_DEFAULT=0
-      - MULE_ENV=dev
       - ELASTIC_APM_SERVER_URLS=http://apm-server:8200
       - ELASTIC_APM_SERVICE_NAME=component1
       - ELASTIC_APM_SERVICE_VERSION=v1
@@ -87,7 +86,7 @@ services:
       - component1
     networks:
       mule:
-    command: ["sh", "-c", "while true; do curl -s http://component1:8281 > /dev/null; sleep 0.1; done"]
+    command: ["sh", "-c", "while true; do curl -s http://component1:8082 > /dev/null; sleep 0.1; done"]
 
 networks:
   mule:
