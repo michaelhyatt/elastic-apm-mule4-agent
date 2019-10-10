@@ -31,7 +31,7 @@ public class TransactionUtils {
 	/*
 	 * End transaction.
 	 */
-	public static void endTransaction(TransactionStore transactionStore, PipelineMessageNotification notification) {
+	public static void endTransaction(PipelineMessageNotification notification) {
 
 		// We only create and end transactions related to the top level flow. All the
 		// rest of the flows invoked through flow-ref are not represented as

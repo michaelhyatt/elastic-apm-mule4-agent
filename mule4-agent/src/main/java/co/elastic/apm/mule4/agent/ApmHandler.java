@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import co.elastic.apm.api.Span;
 import co.elastic.apm.mule4.agent.exception.ExceptionUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
-import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
 /*
@@ -21,9 +20,6 @@ import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 public class ApmHandler {
 
 	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
-
-	// Store for all active transactions in flight.
-	private TransactionStore transactionStore = new TransactionStore();
 
 	// What to invoke when Mule process step starts.
 	public Span handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
@@ -46,14 +42,14 @@ public class ApmHandler {
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
 		logger.trace("Handling exception event");
 
-		ExceptionUtils.captureException(span, transactionStore, location, parameters, event, ex);
+		ExceptionUtils.captureException(span, location, parameters, event, ex);
 	}
 
 	// What to invoke when Mule flow completes execution.
 	public void handleFlowEndEvent(PipelineMessageNotification notification) {
 		logger.trace("Handling flow end event");
 
-		TransactionUtils.endTransaction(transactionStore, notification);
+		TransactionUtils.endTransaction(notification);
 	}
 
 }

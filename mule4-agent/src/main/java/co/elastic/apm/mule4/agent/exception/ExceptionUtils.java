@@ -10,7 +10,6 @@ import co.elastic.apm.api.Span;
 import co.elastic.apm.mule4.agent.span.ApmEventUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.ApmTransaction;
-import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 /* 
  * Handling of Exceptions thrown by flow steps.
@@ -19,7 +18,7 @@ public class ExceptionUtils {
 	private static final String ERROR_FLOW = "ERROR_FLOW";
 	private static final String ERROR_STEP = "ERROR_STEP";
 
-	public static void captureException(Span span, TransactionStore transactionStore, ComponentLocation location,
+	public static void captureException(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
 
 		// End the current span normally.
