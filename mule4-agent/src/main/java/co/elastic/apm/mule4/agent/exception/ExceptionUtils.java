@@ -7,7 +7,6 @@ import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 import co.elastic.apm.api.Span;
-import co.elastic.apm.mule4.agent.span.ApmEventUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.ApmTransaction;
 
@@ -25,7 +24,7 @@ public class ExceptionUtils {
 		// TODO: update to end with timestamp retrieved from external arguments.
 		span.end();
 
-		ApmTransaction transaction = ApmEventUtils.getTransaction(event).get();
+		ApmTransaction transaction = SpanUtils.getTransaction(event).get();
 
 		// Double-ensure there is no Exception info already attached to the transaction.
 		if (transaction.getLabel(ERROR_STEP).isPresent() || transaction.getLabel(ERROR_FLOW).isPresent())
