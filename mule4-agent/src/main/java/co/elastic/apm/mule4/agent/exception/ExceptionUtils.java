@@ -1,14 +1,13 @@
 package co.elastic.apm.mule4.agent.exception;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 import co.elastic.apm.api.Span;
-import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.span.ApmEventUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.ApmTransaction;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
@@ -27,36 +26,17 @@ public class ExceptionUtils {
 		// TODO: update to end with timestamp retrieved from external arguments.
 		span.end();
 
-		String transactionId = getTransactionId(event);
+		ApmTransaction transaction = ApmEventUtils.getTransaction(event).get();
 
-		Optional<Transaction> transaction = Optional.empty();
+		// Double-ensure there is no Exception info already attached to the transaction.
+		if (transaction.getLabel(ERROR_STEP).isPresent() || transaction.getLabel(ERROR_FLOW).isPresent())
+			return;
 
-		// Ensure the transaction is not being updated from multiple threads.
-		synchronized (transaction) {
-
-			// Ensure we are only attaching the Exception to transaction once, since
-			// rethrowing it causes this methid to be invoked multiple times.
-			transaction = transactionStore.getTransaction(transactionId);
-
-			if (!transaction.isPresent())
-				return;
-
-			ApmTransaction transaction2 = (ApmTransaction) transaction.get();
-
-			// Double-ensure there is no Exception info already attached to the transaction.
-			if (transaction2.getLabel(ERROR_STEP).isPresent() || transaction2.getLabel(ERROR_FLOW).isPresent())
-				return;
-
-			// Capture the Exception details and store the transaction back.
-			transaction2.captureException(ex.getCause());
-			transaction2.addLabel(ERROR_STEP, SpanUtils.getStepName(parameters));
-			transaction2.addLabel(ERROR_FLOW, SpanUtils.getFlowName(location));
-			transactionStore.storeTransaction(transactionId, transaction2);
-		}
+		// Capture the Exception details and store the transaction back.
+		transaction.captureException(ex.getCause());
+		transaction.addLabel(ERROR_STEP, SpanUtils.getStepName(parameters));
+		transaction.addLabel(ERROR_FLOW, SpanUtils.getFlowName(location));
 
 	}
 
-	private static String getTransactionId(InterceptionEvent event) {
-		return event.getCorrelationId();
-	}
 }

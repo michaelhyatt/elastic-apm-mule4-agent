@@ -1,23 +1,23 @@
 package co.elastic.apm.mule4.agent.span;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.mule.runtime.api.component.location.ComponentLocation;
 import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.interception.ProcessorParameterValue;
 
 import co.elastic.apm.api.Span;
-import co.elastic.apm.api.Transaction;
-import co.elastic.apm.mule4.agent.transaction.TransactionStore;
+import co.elastic.apm.mule4.agent.transaction.ApmTransaction;
 
 /*
  * Creation and ending of APM Spans.
  */
 public class SpanUtils {
 
-//	private static final String REQUEST_BUILDER_PARAM = "requestBuilder";
-//	private static final String HTTP_REQUEST_ACTIVITY_NAMESPACE = "http";
-//	private static final String HTTP_REQUEST_ACTIVITY_NAME = "request";
+	// private static final String REQUEST_BUILDER_PARAM = "requestBuilder";
+	// private static final String HTTP_REQUEST_ACTIVITY_NAMESPACE = "http";
+	// private static final String HTTP_REQUEST_ACTIVITY_NAME = "request";
 
 	private static final String SUBTYPE = "mule-step";
 	private static final String DOC_NAME = "doc:name";
@@ -26,18 +26,28 @@ public class SpanUtils {
 	/*
 	 * Start a span
 	 */
-	public static Span startSpan(TransactionStore transactionStore, ComponentLocation location,
-			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
-		String transactionId = getTransactionId(event);
+	public static Span startSpan(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
+			InterceptionEvent event) {
 
-		// Span can only be started if there is an existing transaction created by flow
-		// listener.
-		Transaction transaction = transactionStore.getTransaction(transactionId)
-				.orElseThrow(() -> new RuntimeException("Could not find transaction " + transactionId));
+		// retrieve current transaction from event flowVar
+		Optional<ApmTransaction> transactionOpt = ApmEventUtils.getTransaction(event);
+
+		ApmTransaction transaction;
+		if (transactionOpt.isPresent()) {
+			transaction = transactionOpt.get();
+		} else {
+			// or, start a new one and store it in the flowVar, if doesn't exist
+			transaction = ApmEventUtils.startTransaction(event);
+			
+			// TODO: populate more transaction details
+			String flowName = getFlowName(location);
+			transaction.setFlowName(flowName);
+			transaction.setName(flowName);
+			
+			ApmEventUtils.setTransaction(event, transaction);
+		}
 
 		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
-
-		populateTraceIdFlowVariable(span, event, transaction);
 
 		propagateTracingContext(span, location, parameters, event);
 
@@ -52,40 +62,33 @@ public class SpanUtils {
 	private static void propagateTracingContext(Span span, ComponentLocation location,
 			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
 
-//		ComponentIdentifier identifier = location.getComponentIdentifier().getIdentifier();
-//		String component = identifier.getName();
-//		String type = identifier.getNamespace();
+		// ComponentIdentifier identifier =
+		// location.getComponentIdentifier().getIdentifier();
+		// String component = identifier.getName();
+		// String type = identifier.getNamespace();
 
 		// TODO Add support for more protocols and activities
 		// Create HTTP header for http activities
-//		if (HTTP_REQUEST_ACTIVITY_NAME.equals(component) && HTTP_REQUEST_ACTIVITY_NAMESPACE.equals(type))
-//			span.injectTraceHeaders((name, value) -> addTraceHttpHeader(name, value, parameters));
+		// if (HTTP_REQUEST_ACTIVITY_NAME.equals(component) &&
+		// HTTP_REQUEST_ACTIVITY_NAMESPACE.equals(type))
+		// span.injectTraceHeaders((name, value) -> addTraceHttpHeader(name, value,
+		// parameters));
 
 	}
 
-//	private static void addTraceHttpHeader(String name, String value, Map<String, ProcessorParameterValue> parameters) {
-//		ProcessorParameterValue processorParameterValue = parameters.get(REQUEST_BUILDER_PARAM);
-//		HttpRequesterRequestBuilder httpRequesterRequestBuilder = (HttpRequesterRequestBuilder) processorParameterValue
-//				.resolveValue();
-//		MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
-//		MultiMap<String, String> newHeaders = new MultiMap<String, String>(headers);
-//		headers = newHeaders;
-//		headers.put(name, value);
-//		httpRequesterRequestBuilder.setHeaders(headers);
-//	}
-
-	/*
-	 * Populate flow variable with trace id to be used to manually propagate trace
-	 * context for client flow steps where trace context propagation is not
-	 * happening automatically.
-	 */
-	private static void populateTraceIdFlowVariable(Span span, InterceptionEvent event, Transaction transaction) {
-		// Create trace-id flowVar
-		span.injectTraceHeaders((name, value) -> {
-			if (!event.getVariables().containsKey(name))
-				event.addVariable(name, value);
-		});
-	}
+	// private static void addTraceHttpHeader(String name, String value, Map<String,
+	// ProcessorParameterValue> parameters) {
+	// ProcessorParameterValue processorParameterValue =
+	// parameters.get(REQUEST_BUILDER_PARAM);
+	// HttpRequesterRequestBuilder httpRequesterRequestBuilder =
+	// (HttpRequesterRequestBuilder) processorParameterValue
+	// .resolveValue();
+	// MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
+	// MultiMap<String, String> newHeaders = new MultiMap<String, String>(headers);
+	// headers = newHeaders;
+	// headers.put(name, value);
+	// httpRequesterRequestBuilder.setHeaders(headers);
+	// }
 
 	/*
 	 * Populate Span details at creation time
@@ -135,14 +138,6 @@ public class SpanUtils {
 
 		// Get flow step type (e.g. "logger", "flow-ref", etc).
 		return location.getComponentIdentifier().getIdentifier().getName();
-	}
-
-	/*
-	 * Get transactionId that is used to correlate Spans and Transactions. Comes
-	 * from correlationId in the Mule event.
-	 */
-	private static String getTransactionId(InterceptionEvent event) {
-		return event.getCorrelationId();
 	}
 
 	/*

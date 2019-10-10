@@ -30,7 +30,7 @@ public class ApmHandler {
 			InterceptionEvent event) {
 		logger.trace("Handling start event");
 
-		return SpanUtils.startSpan(transactionStore, location, parameters, event);
+		return SpanUtils.startSpan(location, parameters, event);
 	}
 
 	// What to invoke when Mule process step ends.
@@ -47,15 +47,6 @@ public class ApmHandler {
 		logger.trace("Handling exception event");
 
 		ExceptionUtils.captureException(span, transactionStore, location, parameters, event, ex);
-	}
-
-	// What to invoke when Mule flow starts execution.
-	public void handleFlowStartEvent(PipelineMessageNotification notification) {
-		logger.trace("Handling flow start event");
-
-		if (TransactionUtils.isFirstEvent(transactionStore, notification))
-			TransactionUtils.startTransaction(transactionStore, notification);
-
 	}
 
 	// What to invoke when Mule flow completes execution.

@@ -26,14 +26,15 @@ public class ApmPipelineNotificationListener
 		// Event listener
 		String identifier = notification.getAction().getIdentifier();
 
-		if (String.valueOf(PipelineMessageNotification.PROCESS_START).equals(identifier))
-			apmHandler.handleFlowStartEvent(notification);
+//		if (String.valueOf(PipelineMessageNotification.PROCESS_START).equals(identifier))
+//			apmHandler.handleFlowStartEvent(notification);
 
 		// On exception this event doesn't fire, only on successful flow completion.
 		// else if (identifier ==
 		// String.valueOf(PipelineMessageNotification.PROCESS_END)
 
-		else if (String.valueOf(PipelineMessageNotification.PROCESS_COMPLETE).equals(identifier))
+//		else 
+			if (String.valueOf(PipelineMessageNotification.PROCESS_COMPLETE).equals(identifier))
 			apmHandler.handleFlowEndEvent(notification);
 
 	}
