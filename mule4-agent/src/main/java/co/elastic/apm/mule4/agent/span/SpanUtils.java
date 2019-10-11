@@ -18,13 +18,11 @@ import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
  */
 public class SpanUtils {
 
-	// private static final String REQUEST_BUILDER_PARAM = "requestBuilder";
-	// private static final String HTTP_REQUEST_ACTIVITY_NAMESPACE = "http";
-	// private static final String HTTP_REQUEST_ACTIVITY_NAME = "request";
-
 	private static final String SUBTYPE = "mule-step";
 	private static final String DOC_NAME = "doc:name";
 	private static final String UNNAMED = "...";
+	
+	public static final String ELASTIC_APM_SPAN = "elastic-apm-span";
 
 	/*
 	 * Start a span
@@ -40,58 +38,28 @@ public class SpanUtils {
 			transaction = transactionOpt.get();
 		} else {
 			// or, start a new one and store it in the flowVar, if doesn't exist
-			transaction = SpanUtils.startTransaction(event);
+			transaction = TransactionUtils.startTransaction(event);
 
 			// TODO: populate more transaction details
 			String flowName = getFlowName(location);
 			transaction.setFlowName(flowName);
 			transaction.setName(flowName);
 
-			SpanUtils.setTransaction(event, transaction);
+			setTransactionAsFlowvar(event, transaction);
 		}
 
 		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
 
-		propagateTracingContext(span, location, parameters, event);
-
 		setSpanDetails(span, location, parameters, event);
 
+		setSpanAsFlowvar(event, span);
+		
 		return span;
 	}
 
-	/*
-	 * Propagate transaction context to external components
-	 */
-	private static void propagateTracingContext(Span span, ComponentLocation location,
-			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
-
-		// ComponentIdentifier identifier =
-		// location.getComponentIdentifier().getIdentifier();
-		// String component = identifier.getName();
-		// String type = identifier.getNamespace();
-
-		// TODO Add support for more protocols and activities
-		// Create HTTP header for http activities
-		// if (HTTP_REQUEST_ACTIVITY_NAME.equals(component) &&
-		// HTTP_REQUEST_ACTIVITY_NAMESPACE.equals(type))
-		// span.injectTraceHeaders((name, value) -> addTraceHttpHeader(name, value,
-		// parameters));
-
+	private static void setSpanAsFlowvar(InterceptionEvent event, Span span) {
+		event.addVariable(SpanUtils.ELASTIC_APM_SPAN, new ApmSpan(span));
 	}
-
-	// private static void addTraceHttpHeader(String name, String value, Map<String,
-	// ProcessorParameterValue> parameters) {
-	// ProcessorParameterValue processorParameterValue =
-	// parameters.get(REQUEST_BUILDER_PARAM);
-	// HttpRequesterRequestBuilder httpRequesterRequestBuilder =
-	// (HttpRequesterRequestBuilder) processorParameterValue
-	// .resolveValue();
-	// MultiMap<String, String> headers = httpRequesterRequestBuilder.getHeaders();
-	// MultiMap<String, String> newHeaders = new MultiMap<String, String>(headers);
-	// headers = newHeaders;
-	// headers.put(name, value);
-	// httpRequesterRequestBuilder.setHeaders(headers);
-	// }
 
 	/*
 	 * Populate Span details at creation time
@@ -184,12 +152,8 @@ public class SpanUtils {
 		return Optional.ofNullable((ApmTransaction) typedValue.getValue());
 	}
 
-	public static void setTransaction(InterceptionEvent event, ApmTransaction transaction) {
+	public static void setTransactionAsFlowvar(InterceptionEvent event, ApmTransaction transaction) {
 		event.addVariable(TransactionUtils.ELASTIC_APM_TRANSACTION, transaction);
-	}
-
-	public static ApmTransaction startTransaction(InterceptionEvent event) {
-		return TransactionUtils.startTransaction(event);
 	}
 
 }

@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String
 }]]]></http:headers>
 		</http:request>
 		<set-payload value="123" doc:name="Set Payload" doc:id="03eb96b4-d33c-4151-8454-1da3bb378d4d" />
@@ -28,7 +28,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 					<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String
 }]]]></http:headers>
 				</http:request>
 			</route>
@@ -37,7 +37,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 					<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String
 }]]]></http:headers>
 				</http:request>
 			</route>
@@ -46,7 +46,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 					<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String
 }]]]></http:headers>
 				</http:request>
 			</route>
@@ -55,7 +55,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"elastic-apm-traceparent" : vars['elastic-apm-traceparent']
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String
 }]]]></http:headers>
 		</http:request>
 	</flow>

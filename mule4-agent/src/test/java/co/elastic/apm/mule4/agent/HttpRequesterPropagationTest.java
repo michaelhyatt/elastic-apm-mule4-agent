@@ -3,6 +3,7 @@ package co.elastic.apm.mule4.agent;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
@@ -32,7 +33,7 @@ public class HttpRequesterPropagationTest extends BaseAbstractApmMuleTestCase {
 		wireMockService.stubFor(get(urlEqualTo("/"))
 				.withHeader("myotherheader", equalTo("value"))
 				.withHeader("flowname", equalTo("TestMyHeaderFlow"))
-//				.withHeader("elastic-apm-traceparent", matching("^00-(.*)-01$"))
+				.withHeader("elastic-apm-traceparent", matching("^00-(.*)-01$"))
 				.willReturn(aResponse().withStatus(200)));
 
 		CoreEvent result = flowRunner("TestMyHeaderFlow").run();

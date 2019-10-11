@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.event.Event;
+import org.mule.runtime.api.interception.InterceptionEvent;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
@@ -100,7 +101,7 @@ public class TransactionUtils {
 		// TODO: Populate the transaction status
 	}
 
-	public static ApmTransaction startTransaction(Event event) {
+	public static ApmTransaction startTransaction(InterceptionEvent event) {
 
 		if (hasRemoteParent(event))
 			return new ApmTransaction(ElasticApm.startTransactionWithRemoteParent(x -> headerExtractor(x, event)));

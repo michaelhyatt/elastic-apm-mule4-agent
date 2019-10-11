@@ -40,7 +40,7 @@ public class MuleProcessorInterceptor implements ProcessorInterceptor {
 		// Before flow step is executing.
 
 		logger.debug("===> Before step {}", location.getLocation());
-
+		
 		Span span = apmHandler.handleProcessorStartEvent(location, parameters, event);
 
 		// CompletableFuture handling exception and completion of the step.

@@ -18,7 +18,7 @@ output application/java
 ---
 {
 	"myotherheader" : vars['this-is-just-a-var'],
-	"elastic-apm-traceparent" : vars['elastic-apm-transaction'].flowName,
+	"elastic-apm-traceparent" : vars['elastic-apm-span'].elasticApmTraceparent as String,
 	"flowname" : vars['elastic-apm-transaction'].flowName
 }]]]></http:headers>
 		</http:request>
