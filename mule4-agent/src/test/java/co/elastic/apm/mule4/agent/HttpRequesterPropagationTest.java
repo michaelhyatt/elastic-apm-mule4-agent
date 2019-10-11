@@ -31,6 +31,7 @@ public class HttpRequesterPropagationTest extends BaseAbstractApmMuleTestCase {
 
 		wireMockService.stubFor(get(urlEqualTo("/"))
 				.withHeader("myotherheader", equalTo("value"))
+				.withHeader("flowname", equalTo("TestMyHeaderFlow"))
 //				.withHeader("elastic-apm-traceparent", matching("^00-(.*)-01$"))
 				.willReturn(aResponse().withStatus(200)));
 

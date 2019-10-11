@@ -13,10 +13,13 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<set-variable value="value" doc:name="Set Variable" doc:id="22b37cef-2adc-4cae-975c-5a62e464a38f" variableName="this-is-just-a-var"/>
 		<http:request method="GET" doc:name="Request"
 			doc:id="0c5dcdba-78ac-4023-a53b-7922b87af27b" url="http://127.0.0.1:8889/" >
-			<http:headers ><![CDATA[#[output application/java
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/java
 ---
 {
-	"myotherheader" : vars['this-is-just-a-var']
+	"myotherheader" : vars['this-is-just-a-var'],
+	"elastic-apm-traceparent" : vars['elastic-apm-transaction'].flowName,
+	"flowname" : vars['elastic-apm-transaction'].flowName
 }]]]></http:headers>
 		</http:request>
 		<logger level="WARN" doc:name="Logger" doc:id="3939e65c-b7e7-4847-bb53-78b9637aeb76" message="#[vars]"/>
