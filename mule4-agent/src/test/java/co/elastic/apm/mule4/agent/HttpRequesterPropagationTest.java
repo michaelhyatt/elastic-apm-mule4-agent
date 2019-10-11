@@ -18,6 +18,8 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import co.elastic.apm.mule4.agent.config.BaseAbstractApmMuleTestCase;
+import co.elastic.apm.mule4.agent.transaction.ApmTransaction;
+import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
 public class HttpRequesterPropagationTest extends BaseAbstractApmMuleTestCase {
 
@@ -39,6 +41,8 @@ public class HttpRequesterPropagationTest extends BaseAbstractApmMuleTestCase {
 		Map<String, TypedValue<?>> variables = result.getVariables();
 		
 		assertEquals("value", variables.get("this-is-just-a-var").getValue());
+		ApmTransaction transaction = (ApmTransaction) variables.get(TransactionUtils.ELASTIC_APM_TRANSACTION).getValue();
+		assertEquals("TestMyHeaderFlow", transaction.getFlowName());
 		
 		assertEquals("TestMyHeaderFlow", getTransaction().getNameAsString());
 		assertEquals(3, getSpans().size());
