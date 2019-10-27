@@ -12,7 +12,7 @@ import org.junit.Test;
 import co.elastic.apm.mule4.agent.config.BaseAbstractApmMuleTestCase;
 import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
-@Ignore
+//@Ignore
 public class FlowWithScriptTest extends BaseAbstractApmMuleTestCase {
 
 	@Test
@@ -33,6 +33,7 @@ public class FlowWithScriptTest extends BaseAbstractApmMuleTestCase {
 
 	}
 
+	@Ignore // Propagation is not working
 	@Test
 	public void testWithTracingPropagation() throws Exception {
 		HttpGet getRequest = new HttpGet("http://127.0.0.1:8889/");

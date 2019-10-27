@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	
 		<http:listener doc:name="Listener" doc:id="ccee7930-ce1c-41ab-9ea7-fd456e6a8c03" config-ref="HTTP_Listener_config" path="/"/>
 		<scripting:execute doc:name="Execute" doc:id="80bd39a2-7570-451c-9d28-5c924918687c" engine="groovy">
-			<scripting:code >Thread.sleep(500);</scripting:code>
+			<scripting:code >System.out.println("test");</scripting:code>
 		</scripting:execute>
 		<logger level="INFO" doc:name="Logger" doc:id="5748afbc-892a-4039-980e-82a2dbba5f55" />
 	</flow>

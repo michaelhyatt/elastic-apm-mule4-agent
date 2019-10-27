@@ -73,7 +73,7 @@ public class SpanUtils {
 		apmSpanStack.push(new ApmSpan(span));
 
 		event.addVariable(ELASTIC_APM_SPANS, apmSpanStack);
-		
+
 		return span;
 	}
 
@@ -137,12 +137,13 @@ public class SpanUtils {
 
 		// TODO Check how to get the timestamps from the message
 		span.end();
-		
+
 		TypedValue<?> variable = event.getVariables().get(ELASTIC_APM_SPANS);
-		ApmSpanStack apmSpanStack = (ApmSpanStack) variable.getValue();
-		apmSpanStack.pop();
 
-
+		if (variable != null) {
+			ApmSpanStack apmSpanStack = (ApmSpanStack) variable.getValue();
+			apmSpanStack.pop();
+		}
 	}
 
 	private static void setFinalDetails(Span span, ComponentLocation location,
