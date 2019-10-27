@@ -33,7 +33,7 @@ public class FlowWithScriptTest extends BaseAbstractApmMuleTestCase {
 
 	}
 
-	@Ignore // Propagation is not working
+//	@Ignore // Propagation is not working
 	@Test
 	public void testWithTracingPropagation() throws Exception {
 		HttpGet getRequest = new HttpGet("http://127.0.0.1:8889/");

@@ -12,9 +12,12 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	<flow name="component2Flow" doc:id="9769404f-c387-48f4-a40f-efd5c6042763" >
 	
 		<http:listener doc:name="Listener" doc:id="ccee7930-ce1c-41ab-9ea7-fd456e6a8c03" config-ref="HTTP_Listener_config" path="/"/>
-		<scripting:execute doc:name="Execute" doc:id="80bd39a2-7570-451c-9d28-5c924918687c" engine="groovy">
+
+<!-- 		<logger level="INFO" doc:name="Execute" doc:id="5748afba-892a-4039-980e-82a2dbba5f55" />
+ -->
+ 		<scripting:execute doc:name="Execute" doc:id="80bd39a2-7570-451c-9d28-5c924918687c" engine="groovy" target="myVar">
 			<scripting:code >System.out.println("test");</scripting:code>
-		</scripting:execute>
+		</scripting:execute> 
 		<logger level="INFO" doc:name="Logger" doc:id="5748afbc-892a-4039-980e-82a2dbba5f55" />
 	</flow>
 </mule>
