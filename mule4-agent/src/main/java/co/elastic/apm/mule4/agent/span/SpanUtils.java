@@ -21,8 +21,8 @@ public class SpanUtils {
 	private static final String SUBTYPE = "mule-step";
 	private static final String DOC_NAME = "doc:name";
 	private static final String UNNAMED = "...";
-	
-	public static final String ELASTIC_APM_SPAN = "elastic-apm-span";
+
+	public static final String ELASTIC_APM_SPANS = "elastic-apm-spans";
 
 	/*
 	 * Start a span
@@ -33,12 +33,26 @@ public class SpanUtils {
 		// retrieve current transaction from event flowVar
 		Optional<ApmTransaction> transactionOpt = SpanUtils.getTransaction(event);
 
-		ApmTransaction transaction;
+		ApmSpan parentSpan;
+		ApmSpanStack apmSpanStack;
 		if (transactionOpt.isPresent()) {
-			transaction = transactionOpt.get();
+
+			// If there is a transaction there already, check if the SpanStack is present
+			// If it is, return the latest span as parent
+			TypedValue<?> variable = event.getVariables().get(ELASTIC_APM_SPANS);
+
+			if (variable != null) {
+				// Found span stack
+				apmSpanStack = (ApmSpanStack) variable.getValue();
+				parentSpan = apmSpanStack.peek();
+			} else {
+				// If transaction exists and there is no corresponding spanstack, raise an
+				// exception
+				throw new RuntimeException("Found transaction with no corresponding SpanStack! Fix it!");
+			}
 		} else {
 			// or, start a new one and store it in the flowVar, if doesn't exist
-			transaction = TransactionUtils.startTransaction(event);
+			ApmTransaction transaction = TransactionUtils.startTransaction(event);
 
 			// TODO: populate more transaction details
 			String flowName = getFlowName(location);
@@ -46,19 +60,21 @@ public class SpanUtils {
 			transaction.setName(flowName);
 
 			setTransactionAsFlowvar(event, transaction);
+
+			// Create SpanStack as well with the new transaction as a first element
+			parentSpan = new ApmSpan(transaction);
+			apmSpanStack = new ApmSpanStack(parentSpan);
 		}
 
-		Span span = transaction.startSpan(getSpanType(location), getSubType(location), getAction(location));
+		Span span = parentSpan.startSpan(getSpanType(location), getSubType(location), getAction(location));
 
 		setSpanDetails(span, location, parameters, event);
 
-		setSpanAsFlowvar(event, span);
+		apmSpanStack.push(new ApmSpan(span));
+
+		event.addVariable(ELASTIC_APM_SPANS, apmSpanStack);
 		
 		return span;
-	}
-
-	private static void setSpanAsFlowvar(InterceptionEvent event, Span span) {
-		event.addVariable(SpanUtils.ELASTIC_APM_SPAN, new ApmSpan(span));
 	}
 
 	/*
@@ -121,6 +137,11 @@ public class SpanUtils {
 
 		// TODO Check how to get the timestamps from the message
 		span.end();
+		
+		TypedValue<?> variable = event.getVariables().get(ELASTIC_APM_SPANS);
+		ApmSpanStack apmSpanStack = (ApmSpanStack) variable.getValue();
+		apmSpanStack.pop();
+
 
 	}
 

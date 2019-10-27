@@ -10,6 +10,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		<http:listener-connection host="127.0.0.1" port="8889" />
 	</http:listener-config>
 	<flow name="component2Flow" doc:id="9769404f-c387-48f4-a40f-efd5c6042763" >
+	
 		<http:listener doc:name="Listener" doc:id="ccee7930-ce1c-41ab-9ea7-fd456e6a8c03" config-ref="HTTP_Listener_config" path="/"/>
 		<scripting:execute doc:name="Execute" doc:id="80bd39a2-7570-451c-9d28-5c924918687c" engine="groovy">
 			<scripting:code >Thread.sleep(500);</scripting:code>

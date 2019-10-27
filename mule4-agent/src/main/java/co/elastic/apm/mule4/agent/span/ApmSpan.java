@@ -1,8 +1,5 @@
 package co.elastic.apm.mule4.agent.span;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
 import co.elastic.apm.api.HeaderInjector;
 import co.elastic.apm.api.Scope;
 import co.elastic.apm.api.Span;
@@ -86,17 +83,6 @@ public class ApmSpan {
 
 	public void injectTraceHeaders(HeaderInjector headerInjector) {
 		span.injectTraceHeaders(headerInjector);
-	}
-	
-	public String getElasticApmTraceparent() throws InterruptedException, ExecutionException {
-		
-		CompletableFuture<String> future = new CompletableFuture<>();
-		
-		injectTraceHeaders((name, value) -> {
-			future.complete(value);
-		});
-		
-		return future.get();
 	}
 
 }

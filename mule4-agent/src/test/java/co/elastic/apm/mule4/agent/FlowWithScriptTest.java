@@ -6,11 +6,13 @@ import static org.junit.Assert.assertNotEquals;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import co.elastic.apm.mule4.agent.config.BaseAbstractApmMuleTestCase;
 import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
 
+@Ignore
 public class FlowWithScriptTest extends BaseAbstractApmMuleTestCase {
 
 	@Test
