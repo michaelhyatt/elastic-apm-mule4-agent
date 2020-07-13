@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.mule.runtime.core.api.event.CoreEvent;
+import org.slf4j.MDC;
 
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
@@ -14,6 +15,9 @@ import co.elastic.apm.api.Transaction;
  * Handling of Transaction starts and ends
  */
 public class TransactionUtils {
+
+	private static final String TRANSACTION_ID = "transaction.id";
+	private static final String TRACE_ID = "trace.id";
 
 	/*
 	 * Is this notification related to newly started flow, i.e. there is no
@@ -42,6 +46,10 @@ public class TransactionUtils {
 		// Once created, store the transaction in the store.
 		transactionStore.storeTransaction(getTransactionId(notification).get(),
 				populateTransactionDetails(transaction, notification));
+
+		// Populate MDC for logs correlation
+		MDC.put(TRACE_ID, transaction.getTraceId());
+		MDC.put(TRANSACTION_ID, transaction.getId());
 	}
 
 	/*
@@ -142,6 +150,10 @@ public class TransactionUtils {
 		populateFinalTransactionDetails(transaction, notification);
 
 		transaction.end();
+		
+		// Clean MDC
+		MDC.remove(TRACE_ID);
+		MDC.remove(TRANSACTION_ID);
 	}
 
 	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
