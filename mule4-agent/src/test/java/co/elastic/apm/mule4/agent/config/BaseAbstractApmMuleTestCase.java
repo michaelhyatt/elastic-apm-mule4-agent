@@ -72,6 +72,7 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 
 		config = SpyConfiguration.createSpyConfig();
 		tracer = new ElasticApmTracerBuilder().configurationRegistry(config).reporter(reporter).build();
+		tracer.start();
 
 		ElasticApmAgent.initInstrumentation(tracer, ByteBuddyAgent.install());
 

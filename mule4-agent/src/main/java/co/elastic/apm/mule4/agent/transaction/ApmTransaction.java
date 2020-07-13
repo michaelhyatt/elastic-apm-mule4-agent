@@ -116,8 +116,8 @@ public class ApmTransaction implements Transaction {
 		tx.end(epochMicros);
 	}
 
-	public void captureException(Throwable throwable) {
-		tx.captureException(throwable);
+	public String captureException(Throwable throwable) {
+		return tx.captureException(throwable);
 	}
 
 	public String getTraceId() {

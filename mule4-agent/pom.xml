@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.elastic.apm</groupId>
 	<artifactId>mule4-agent</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>Elastic Mule 4 APM agent</name>
 	<description>Elastic Mule 4 APM agent</description>
 	<packaging>jar</packaging>
@@ -12,7 +12,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 
-		<elastic-apm.version>1.10.0</elastic-apm.version>
+		<elastic-apm.version>1.17.0</elastic-apm.version>
 
 		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 		<build.plugins.plugin.version>2.3.2</build.plugins.plugin.version>
