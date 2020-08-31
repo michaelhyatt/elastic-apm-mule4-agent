@@ -66,7 +66,8 @@ public class TransactionUtils {
 
 		transaction2.setType(Transaction.TYPE_REQUEST);
 
-		transaction2.addLabel("correlationId", notification.getEvent().getCorrelationId());
+		getTransactionId(notification)
+				.ifPresent(s -> transaction2.addLabel("correlationId", s));
 
 		// TODO: investigate population of transaction start from the external
 		// parameters.

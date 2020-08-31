@@ -2,3 +2,5 @@
 $*
 .mule/
 .settings
+.idea
+*.iml
