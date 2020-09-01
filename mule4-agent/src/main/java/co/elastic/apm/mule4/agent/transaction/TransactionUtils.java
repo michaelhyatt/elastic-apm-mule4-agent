@@ -66,6 +66,9 @@ public class TransactionUtils {
 
 		transaction2.setType(Transaction.TYPE_REQUEST);
 
+		getTransactionId(notification)
+				.ifPresent(s -> transaction2.addLabel("correlationId", s));
+
 		// TODO: investigate population of transaction start from the external
 		// parameters.
 		// transaction.setStartTimestamp(epochMicros);
