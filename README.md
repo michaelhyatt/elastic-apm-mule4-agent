@@ -13,7 +13,7 @@ The agent allows tracking the timing of Mule flow steps executions and captures 
 ## Installation
 Download the latest jar from the [Releases](https://github.com/michaelhyatt/elastic-apm-mule4-agent/releases) and install it using Maven. Make sure to populate the right values for `PATH_TO_JAR` and `AGENT_VERSION`.
 ```bash
-mvn install:install-file -Dfile=$PATH_TO_JAR -DgroupId=co.elastic.apm -DartifactId=apm-mule3-agent -Dversion=$AGENT_VERSION -Dpackaging=jar
+mvn install:install-file -Dfile=$PATH_TO_JAR -DgroupId=co.elastic.apm -DartifactId=mule4-agent -Dversion=$AGENT_VERSION -Dpackaging=jar
 ```
 ## Setup in Mule
 ### Add dependency in Maven
