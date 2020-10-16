@@ -9,4 +9,11 @@
 	<object name="_muleProcessorInterceptorFactory"
 		class="co.elastic.apm.mule4.agent.MuleProcessorInterceptorFactory" />
 
+	<object doc:name="Object" name="_apmPipelineNotifications" class="co.elastic.apm.mule4.agent.ApmPipelineNotificationListener" />
+	
+	<notifications>
+		<notification event="PIPELINE-MESSAGE"/>
+		<notification-listener ref="_apmPipelineNotifications" />
+	</notifications>
+
 </mule>
