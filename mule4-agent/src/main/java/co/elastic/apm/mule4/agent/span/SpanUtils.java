@@ -57,13 +57,13 @@ public class SpanUtils {
 	/*
 	 * Populate Span details at creation time
 	 */
-	private static void setSpanDetails(Span span, MessageProcessorNotification notifiaction) {
+	private static void setSpanDetails(Span span, MessageProcessorNotification notification) {
 		// TODO Capture event properties
 		// TODO Capture flow variables
 
-		span.setName(getStepName(notifiaction));
+		span.setName(getStepName(notification));
 
-		span.setStartTimestamp(getTimestamp(notifiaction));
+		span.setStartTimestamp(getTimestamp(notification));
 
 	}
 
@@ -130,8 +130,8 @@ public class SpanUtils {
 		span.end(getTimestamp(notification));
 	}
 
-	private static long getTimestamp(MessageProcessorNotification notifiaction) {
-		long timestamp = notifiaction.getTimestamp();
+	private static long getTimestamp(MessageProcessorNotification notification) {
+		long timestamp = notification.getTimestamp() * 1_000;
 		return timestamp;
 	}
 

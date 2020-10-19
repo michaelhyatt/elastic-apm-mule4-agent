@@ -44,7 +44,7 @@ public class TransactionUtils {
 		}
 
 		// Set start timestamp
-		transaction.setStartTimestamp(notification.getTimestamp());
+		transaction.setStartTimestamp(getTimestamp(notification));
 
 		// Once created, store the transaction in the store.
 		transactionStore.storeTransaction(getTransactionId(notification).get(),
@@ -163,7 +163,7 @@ public class TransactionUtils {
 	}
 
 	private static long getTimestamp(PipelineMessageNotification notification) {
-		long timestamp = notification.getTimestamp();
+		long timestamp = notification.getTimestamp() * 1_000;
 		return timestamp;
 	}
 
