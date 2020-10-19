@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain:mule-domain
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="57ba41ff-74dc-4b47-92d5-2fbb18a86111" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+
+    <!-- configure here resource to be shared within the domain -->
+
+</domain:mule-domain>
