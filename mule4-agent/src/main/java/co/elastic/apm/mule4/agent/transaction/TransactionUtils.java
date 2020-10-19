@@ -44,7 +44,7 @@ public class TransactionUtils {
 		}
 
 		// Set start timestamp
-		transaction.setStartTimestamp(getTimestamp(notification));
+//		transaction.setStartTimestamp(getTimestamp(notification));
 
 		// Once created, store the transaction in the store.
 		transactionStore.storeTransaction(getTransactionId(notification).get(),
@@ -155,17 +155,18 @@ public class TransactionUtils {
 
 		populateFinalTransactionDetails(transaction, notification);
 
-		transaction.end(getTimestamp(notification));
-
+//		transaction.end(getTimestamp(notification));
+		transaction.end();
+		
 		// Clean MDC
 		MDC.remove(TRACE_ID);
 		MDC.remove(TRANSACTION_ID);
 	}
 
-	private static long getTimestamp(PipelineMessageNotification notification) {
-		long timestamp = notification.getTimestamp() * 1_000;
-		return timestamp;
-	}
+//	private static long getTimestamp(PipelineMessageNotification notification) {
+//		long timestamp = notification.getTimestamp() * 1_000;
+//		return timestamp;
+//	}
 
 	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
 

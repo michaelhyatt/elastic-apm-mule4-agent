@@ -63,7 +63,7 @@ public class SpanUtils {
 
 		span.setName(getStepName(notification));
 
-		span.setStartTimestamp(getTimestamp(notification));
+//		span.setStartTimestamp(getTimestamp(notification));
 
 	}
 
@@ -127,13 +127,14 @@ public class SpanUtils {
 
 		setFinalDetails(span, notification);
 
-		span.end(getTimestamp(notification));
+//		span.end(getTimestamp(notification));
+		span.end();
 	}
 
-	private static long getTimestamp(MessageProcessorNotification notification) {
-		long timestamp = notification.getTimestamp() * 1_000;
-		return timestamp;
-	}
+//	private static long getTimestamp(MessageProcessorNotification notification) {
+//		long timestamp = notification.getTimestamp() * 1_000;
+//		return timestamp;
+//	}
 
 	private static void setFinalDetails(Span span, MessageProcessorNotification notification) {
 		// Noop currently
