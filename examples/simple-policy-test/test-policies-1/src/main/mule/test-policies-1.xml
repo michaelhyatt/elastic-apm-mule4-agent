@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0b461057-f218-4132-a807-1b3ca027e452" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="16383844" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a570ea99-e200-4190-9b63-79af5220b8f3" flowRef="test-policies-1Flow" />
+	
+	<import file="tracer.xml"  doc:name="Import" doc:id="ecc66856-47c8-4143-92cb-8c3b3f1c1d80" />
+	<flow name="test-policies-1Flow" doc:id="5f2439b4-7b7e-44b4-9387-279f3d7ee1b3" >
+		<http:listener doc:name="Listener" doc:id="ca852500-2f58-4275-9a65-6d6a15961e6c" config-ref="HTTP_Listener_config" path="/"/>
+		<logger level="INFO" doc:name="Logger" doc:id="642f12aa-5331-4c3b-89e7-86296645fdcb" message="this is debug"/>
+	</flow>
+</mule>

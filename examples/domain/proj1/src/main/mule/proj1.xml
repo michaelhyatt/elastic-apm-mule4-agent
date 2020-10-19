@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+
+	<import doc:name="Import" doc:id="b9240848-52ad-4dcc-8ed4-6f9e864bd1e4" file="tracer.xml" />
+	<api-gateway:autodiscovery apiId="16383844" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="abe59b71-735f-48ea-8d2b-fcc67b2acea0" flowRef="proj1Flow" />
+	<flow name="proj1Flow" doc:id="d1454c5a-5cac-406e-a90a-cc9543353dfc" >
+		<http:listener doc:name="Listener" doc:id="c1859fe0-cdc7-4e9a-9b1e-03ed1561078f" config-ref="HTTP_Listener_config" path="/proj1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b7ab0159-b992-4f06-b0b0-f0b1972a68ad" message="proj1 invoked"/>
+		<set-payload value='{ "result": "proj1 success" }' doc:name="Set Payload" doc:id="e56c4871-3629-4fde-b011-c8f8a6984ed5" />
+	</flow>
+</mule>

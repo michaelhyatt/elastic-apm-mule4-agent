@@ -17,6 +17,7 @@ public class ApmTransaction implements Transaction {
 	private Transaction tx;
 	private String flowName;
 	private Map<String, String> labels = new ConcurrentHashMap<String, String>();
+	private boolean hasException = false;
 
 	public ApmTransaction(Transaction transaction) {
 		this.tx = transaction;
@@ -144,6 +145,14 @@ public class ApmTransaction implements Transaction {
 	 */
 	public void setFlowName(String flowName) {
 		this.flowName = flowName;
+	}
+
+	public boolean hasException() {
+		return this.hasException;
+	}
+	
+	public void setException() {
+		this.hasException = true;
 	}
 
 }

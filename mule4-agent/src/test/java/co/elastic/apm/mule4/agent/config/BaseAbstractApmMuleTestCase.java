@@ -43,7 +43,7 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	public void doSetUpBeforeMuleContextCreation() {
 
 		reporter = Mockito.mock(Reporter.class);
-		
+
 		Mockito.doAnswer(new Answer<Span>() {
 			@Override
 			public Span answer(InvocationOnMock invocation) throws Throwable {
@@ -88,7 +88,15 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 	}
 
 	public Transaction getTransaction() {
-		return tx.get(0);
+
+		Transaction transaction = null;
+
+		synchronized (tx) {
+			if (tx.size() > 0)
+				transaction = tx.get(0);
+		}
+
+		return transaction;
 	}
 
 	public List<Transaction> getTransactions() {

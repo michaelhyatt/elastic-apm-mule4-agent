@@ -9,9 +9,10 @@
 
 	<Appenders>
 		<RollingFile name="file"
-			fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}dep-test.log"
-			filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}dep-test-%i.log">
-			<PatternLayout pattern="%-5p %d [%t] [event: %X{correlationId}] %c: %m%n" />
+			fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}proj2.log"
+			filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}proj2-%i.log">
+			<PatternLayout
+				pattern="%-5p %d [%t] [processor: %X{processorPath}; event: %X{correlationId}] %c: %m%n" />
 			<SizeBasedTriggeringPolicy size="10 MB" />
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
@@ -24,13 +25,11 @@
 		<AsyncLogger name="org.mule.service.http" level="WARN" />
 		<AsyncLogger name="org.mule.extension.http" level="WARN" />
 
-		<AsyncLogger name="co.elastic.apm.mule4" level="DEBUG" />
-		<AsyncLogger name="co.elastic" level="INFO" />
-
 		<!-- Mule logger -->
 		<AsyncLogger
 			name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor"
 			level="INFO" />
+		<AsyncLogger name="co.elastic.apm" level="DEBUG" />
 
 		<AsyncRoot level="INFO">
 			<AppenderRef ref="file" />

@@ -11,13 +11,7 @@ import org.slf4j.LoggerFactory;
 public class ApmPipelineNotificationListener
 		implements PipelineMessageNotificationListener<PipelineMessageNotification> {
 
-	private ApmHandler apmHandler;
-
 	private Logger logger = LoggerFactory.getLogger(ApmPipelineNotificationListener.class);
-
-	public ApmPipelineNotificationListener(ApmHandler apmHandler) {
-		this.apmHandler = apmHandler;
-	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -28,7 +22,7 @@ public class ApmPipelineNotificationListener
 		// TODO: refactor to remove the deprecation warning.
 		switch (notification.getAction().getActionId()) {
 		case PipelineMessageNotification.PROCESS_START:
-			apmHandler.handleFlowStartEvent(notification);
+			ApmHandler.handleFlowStartEvent(notification);
 			break;
 
 		// On exception this event doesn't fire, only on successful flow completion.
@@ -36,7 +30,7 @@ public class ApmPipelineNotificationListener
 			break;
 			
 		case PipelineMessageNotification.PROCESS_COMPLETE:
-			apmHandler.handleFlowEndEvent(notification);
+			ApmHandler.handleFlowEndEvent(notification);
 			break;
 		}
 	}
