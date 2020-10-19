@@ -34,12 +34,12 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		<logger level="INFO" doc:name="Logger"
 			doc:id="8d245e86-ab3d-4f9b-bea5-687e74810f55" message="real flow" />
 		<scripting:execute engine="groovy" doc:name="Execute" doc:id="6d3eda0d-f4d5-4e19-8bde-3d317045804e" >
-			<scripting:code >def val = Math.abs(new Random().nextInt() % 10) + 1;
+			<scripting:code ><![CDATA[def val = Math.abs(new Random().nextInt() % 10) + 1;
 
 print val;
 
 if (val == 5)
-  throw new Exception(&quot;This is 5 my dudes!&quot;);</scripting:code>
+  throw new Exception("This is 5 my dudes!");]]></scripting:code>
 		</scripting:execute>
 	</flow>
 </mule>

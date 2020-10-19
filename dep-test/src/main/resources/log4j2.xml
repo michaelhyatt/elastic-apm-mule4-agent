@@ -24,8 +24,8 @@
 		<AsyncLogger name="org.mule.service.http" level="WARN" />
 		<AsyncLogger name="org.mule.extension.http" level="WARN" />
 
-		<AsyncLogger name="co.elastic.apm.mule4" level="DEBUG" />
-		<AsyncLogger name="co.elastic" level="INFO" />
+<!-- 		<AsyncLogger name="co.elastic.apm.mule4" level="DEBUG" />
+		<AsyncLogger name="co.elastic" level="INFO" /> -->
 
 		<!-- Mule logger -->
 		<AsyncLogger
