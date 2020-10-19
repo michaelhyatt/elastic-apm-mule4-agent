@@ -1,15 +1,11 @@
 package co.elastic.apm.mule4.agent;
 
-import java.util.Map;
-
-import org.mule.runtime.api.component.location.ComponentLocation;
-import org.mule.runtime.api.interception.InterceptionEvent;
-import org.mule.runtime.api.interception.ProcessorParameterValue;
+import org.mule.runtime.api.notification.ExceptionNotification;
+import org.mule.runtime.api.notification.MessageProcessorNotification;
 import org.mule.runtime.api.notification.PipelineMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.elastic.apm.api.Span;
 import co.elastic.apm.mule4.agent.exception.ExceptionUtils;
 import co.elastic.apm.mule4.agent.span.SpanUtils;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
@@ -20,38 +16,35 @@ import co.elastic.apm.mule4.agent.transaction.TransactionUtils;
  */
 public class ApmHandler {
 
-	private Logger logger = LoggerFactory.getLogger(ApmHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(ApmHandler.class);
 
 	// Store for all active transactions in flight.
-	private TransactionStore transactionStore = new TransactionStore();
+	private static TransactionStore transactionStore = new TransactionStore();
 
 	// What to invoke when Mule process step starts.
-	public Span handleProcessorStartEvent(ComponentLocation location, Map<String, ProcessorParameterValue> parameters,
-			InterceptionEvent event) {
-		logger.trace("Handling start event");
-
-		return SpanUtils.startSpan(transactionStore, location, parameters, event);
+	public static void handleProcessorStartEvent(MessageProcessorNotification notification) {
+		logger.debug("Handling start event");
+		
+		SpanUtils.startSpan(transactionStore, notification);
 	}
 
 	// What to invoke when Mule process step ends.
-	public void handleProcessorEndEvent(Span span, ComponentLocation location,
-			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event) {
-		logger.trace("Handling end event");
+	public static void handleProcessorEndEvent(MessageProcessorNotification notification) {
+		logger.debug("Handling end event");
 
-		SpanUtils.endSpan(span, location, parameters, event);
+		SpanUtils.endSpan(transactionStore, notification);
 	}
 
 	// What to invoke when an Exception thrown in the Mule flow.
-	public void handleExceptionEvent(Span span, ComponentLocation location,
-			Map<String, ProcessorParameterValue> parameters, InterceptionEvent event, Throwable ex) {
-		logger.trace("Handling exception event");
+	public static void handleExceptionEvent(ExceptionNotification notification) {
+		logger.debug("Handling exception event");
 
-		ExceptionUtils.captureException(span, transactionStore, location, parameters, event, ex);
+		ExceptionUtils.captureException(transactionStore, notification);
 	}
 
 	// What to invoke when Mule flow starts execution.
-	public void handleFlowStartEvent(PipelineMessageNotification notification) {
-		logger.trace("Handling flow start event");
+	public static void handleFlowStartEvent(PipelineMessageNotification notification) {
+		logger.debug("Handling flow start event");
 
 		if (TransactionUtils.isFirstEvent(transactionStore, notification))
 			TransactionUtils.startTransaction(transactionStore, notification);
@@ -59,8 +52,8 @@ public class ApmHandler {
 	}
 
 	// What to invoke when Mule flow completes execution.
-	public void handleFlowEndEvent(PipelineMessageNotification notification) {
-		logger.trace("Handling flow end event");
+	public static void handleFlowEndEvent(PipelineMessageNotification notification) {
+		logger.debug("Handling flow end event");
 
 		TransactionUtils.endTransaction(transactionStore, notification);
 	}

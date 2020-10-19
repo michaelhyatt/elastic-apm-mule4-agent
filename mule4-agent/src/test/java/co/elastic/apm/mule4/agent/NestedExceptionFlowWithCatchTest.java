@@ -22,7 +22,7 @@ public class NestedExceptionFlowWithCatchTest extends BaseAbstractApmMuleTestCas
 		assertEquals("Execute", getSpans().get(2).getNameAsString());
 		assertEquals("Logger4", getSpans().get(3).getNameAsString());
 		assertEquals("Flow Reference", getSpans().get(4).getNameAsString());
-		assertEquals("java.lang.RuntimeException: this is a nested exception", getErrors().get(0).getException().getMessage());
+		assertEquals("java.lang.RuntimeException: this is a nested exception.", getErrors().get(0).getException().getMessage());
 	}
 
 	@Override

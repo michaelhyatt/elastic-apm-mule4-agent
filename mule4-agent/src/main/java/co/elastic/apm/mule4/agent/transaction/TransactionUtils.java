@@ -43,6 +43,9 @@ public class TransactionUtils {
 			// transaction.ensureParentId();
 		}
 
+		// Set start timestamp
+		transaction.setStartTimestamp(notification.getTimestamp());
+
 		// Once created, store the transaction in the store.
 		transactionStore.storeTransaction(getTransactionId(notification).get(),
 				populateTransactionDetails(transaction, notification));
@@ -66,8 +69,7 @@ public class TransactionUtils {
 
 		transaction2.setType(Transaction.TYPE_REQUEST);
 
-		getTransactionId(notification)
-				.ifPresent(s -> transaction2.addLabel("correlationId", s));
+		getTransactionId(notification).ifPresent(s -> transaction2.addLabel("correlationId", s));
 
 		// TODO: investigate population of transaction start from the external
 		// parameters.
@@ -148,15 +150,21 @@ public class TransactionUtils {
 		if (!isEndOfTopFlow(transactionStore, notification))
 			return;
 
-		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification).get());
+		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification).get())
+				.orElseGet(() -> ElasticApm.currentTransaction());
 
 		populateFinalTransactionDetails(transaction, notification);
 
-		transaction.end();
-		
+		transaction.end(getTimestamp(notification));
+
 		// Clean MDC
 		MDC.remove(TRACE_ID);
 		MDC.remove(TRANSACTION_ID);
+	}
+
+	private static long getTimestamp(PipelineMessageNotification notification) {
+		long timestamp = notification.getTimestamp();
+		return timestamp;
 	}
 
 	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
