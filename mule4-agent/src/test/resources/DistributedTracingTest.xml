@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+ 	<import doc:name="Import" doc:id="5ef81cb5-a7c6-4222-959a-26415136ccf2" file="test-tracer.xml" />
+
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1475a3ab-6bf1-44d0-86d2-fd2e17846d5a" >
+		<http:listener-connection host="127.0.0.1" port="8998" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="2d31f83a-fe39-400c-bbfd-88b823ac88b9" >
+		<http:listener-connection host="127.0.0.1" port="8999" />
+	</http:listener-config>
+	<flow name="testFlow" doc:id="6ef28d05-894f-4fe4-afcf-1e4d47c841a2" >
+		<http:listener doc:name="Listener" doc:id="5dd31efe-b170-4187-83d7-59b9bb3b40d3" config-ref="HTTP_Listener_config" path="/"/>
+		<logger level="WARN" doc:name="Logger" doc:id="21449ae6-be86-4a2b-a467-2fef99cbad33" message="1a"/>
+		<http:request method="GET" doc:name="Request" doc:id="c936c6d1-8060-4cf0-a304-d17eb31d388a" url="http://127.0.0.1:8999"/>
+		<logger level="WARN" doc:name="Logger" doc:id="560350c6-88da-41b0-a09a-d7b15b3842b6" message="1b"/>
+	</flow>
+	<flow name="testFlow1" doc:id="79092fa9-0fb6-4d34-840d-369e11257843" >
+		<http:listener doc:name="Listener" doc:id="88511eff-c66b-4b94-993a-7a403646ef59" config-ref="HTTP_Listener_config1" path="/"/>
+		<logger level="WARN" doc:name="Logger" doc:id="ce0f48ed-1f43-48ff-b0a4-30a98266362e" message="2a"/>
+		<set-payload value='{ "result": "success" }' doc:name="Set Payload" doc:id="3a26e760-e96a-4620-9744-59f04daa060d" />
+		<logger level="WARN" doc:name="Logger" doc:id="05e65759-29af-499d-be31-1fd40c8634c9" message="2b"/>
+	</flow>
+</mule>

@@ -16,12 +16,9 @@ public class ApmMessageProcessorNotificationListener
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onNotification(MessageProcessorNotification notification) {
-		// TODO Auto-generated method stub
-
 		logger.debug("===> Received " + notification.getClass().getName() + ":" + notification.getActionName());
 
 		// Event listener
-		// TODO: refactor to remove the deprecation warning.
 		switch (notification.getAction().getActionId()) {
 		case MessageProcessorNotification.MESSAGE_PROCESSOR_PRE_INVOKE:
 			ApmHandler.handleProcessorStartEvent(notification);
