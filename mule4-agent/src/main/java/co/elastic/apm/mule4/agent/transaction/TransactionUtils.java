@@ -10,6 +10,7 @@ import org.slf4j.MDC;
 
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.tracing.HttpTracingUtils;
 
 /*
  * Handling of Transaction starts and ends
@@ -127,14 +128,16 @@ public class TransactionUtils {
 	}
 
 	private static String getHeaderExtractor(String x, PipelineMessageNotification notification) {
-		// TODO provide parent trace info header extractor to support distributed
-		// transactions
-		return null;
+		return HttpTracingUtils.getTracingHeaderValue(x, notification);
 	}
 
 	private static boolean hasRemoteParent(PipelineMessageNotification notification) {
 		// TODO Determine if the notification was published for a request with remote
 		// parent information.
+		
+		if (HttpTracingUtils.isHttpEvent(notification) && HttpTracingUtils.hasRemoteParent(notification))
+			return true;
+		
 		return false;
 	}
 

@@ -80,7 +80,8 @@
 			<artifactId>mule-http-connector</artifactId>
 			<version>1.5.21</version>
 			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
+			<scope>provided</scope>
+			<!-- scope: test -->
 		</dependency>
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
@@ -103,6 +104,7 @@
 			<classifier>mule-service</classifier>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
@@ -137,6 +139,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+		
 		<!-- Elastic APM -->
 		<dependency>
 			<groupId>co.elastic.apm</groupId>
