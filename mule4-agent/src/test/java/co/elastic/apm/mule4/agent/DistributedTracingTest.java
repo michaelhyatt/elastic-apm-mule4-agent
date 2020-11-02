@@ -60,6 +60,19 @@ public class DistributedTracingTest extends BaseAbstractApmMuleTestCase {
 
 	}
 
+	@Test
+	public void testTraceIdPropagationThroughHttp() throws Exception {
+
+		HttpGet getRequest = new HttpGet("http://localhost:8998");
+		getRequest.addHeader(HttpTracingUtils.ELASTIC_APM_TRACEPARENT, TRACE_PARENT1);
+
+		HttpClient httpClient = HttpClientBuilder.create().build();
+
+		HttpResponse response = httpClient.execute(getRequest);
+
+
+	}
+	
 	@Override
 	protected String getConfigFile() {
 		return "DistributedTracingTest.xml";

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Span;
 import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.tracing.HttpTracingUtils;
 import co.elastic.apm.mule4.agent.transaction.TransactionStore;
 
 /*
@@ -38,11 +39,21 @@ public class SpanUtils {
 
 		Span span = transaction.startSpan(getSpanType(notification), getSubType(notification), getAction(notification));
 
+		checkAndPropagateParentTraceId(span, notification);
+
 		setSpanDetails(span, notification);
 
 		String spanId = getSpanId(notification);
 
 		transactionStore.addSpan(transactionId, spanId, span);
+	}
+
+	private static void checkAndPropagateParentTraceId(Span span, MessageProcessorNotification notification) {
+
+		// Propagate trace.id through HTTP
+		if (HttpTracingUtils.isHttpRequester(notification))
+			HttpTracingUtils.propagateTraceIdHeader(span, notification);
+
 	}
 
 	public static String getSpanId(MessageProcessorNotification notification) {

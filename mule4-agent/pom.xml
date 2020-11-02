@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.elastic.apm</groupId>
 	<artifactId>mule4-agent</artifactId>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<name>Elastic Mule 4 APM agent</name>
 	<description>Elastic Mule 4 APM agent</description>
 	<packaging>jar</packaging>
