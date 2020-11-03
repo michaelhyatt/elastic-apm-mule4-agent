@@ -10,6 +10,7 @@ import org.slf4j.MDC;
 
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
+import co.elastic.apm.mule4.agent.tracing.HttpTracingUtils;
 
 /*
  * Handling of Transaction starts and ends
@@ -127,14 +128,16 @@ public class TransactionUtils {
 	}
 
 	private static String getHeaderExtractor(String x, PipelineMessageNotification notification) {
-		// TODO provide parent trace info header extractor to support distributed
-		// transactions
-		return null;
+		return HttpTracingUtils.getTracingHeaderValue(x, notification);
 	}
 
 	private static boolean hasRemoteParent(PipelineMessageNotification notification) {
 		// TODO Determine if the notification was published for a request with remote
 		// parent information.
+		
+		if (HttpTracingUtils.isHttpEvent(notification) && HttpTracingUtils.hasRemoteParent(notification))
+			return true;
+		
 		return false;
 	}
 
@@ -147,7 +150,7 @@ public class TransactionUtils {
 		// rest of the flows invoked through flow-ref are not represented as
 		// transactions and ignored. Only the corresponding flow-ref step is represented
 		// as Span.
-		if (!isEndOfTopFlow(transactionStore, notification))
+		if (!isEndOfTopFlowOrException(transactionStore, notification))
 			return;
 
 		Transaction transaction = transactionStore.retrieveTransaction(getTransactionId(notification).get())
@@ -168,7 +171,7 @@ public class TransactionUtils {
 //		return timestamp;
 //	}
 
-	private static boolean isEndOfTopFlow(TransactionStore transactionStore, PipelineMessageNotification notification) {
+	private static boolean isEndOfTopFlowOrException(TransactionStore transactionStore, PipelineMessageNotification notification) {
 
 		Optional<String> transactionId = getTransactionId(notification);
 
@@ -182,7 +185,7 @@ public class TransactionUtils {
 
 		ApmTransaction transaction = (ApmTransaction) optional.get();
 
-		if (transaction.getFlowName().equals(getFlowName(notification)))
+		if (transaction.hasException() || transaction.getFlowName().equals(getFlowName(notification)))
 			return true;
 
 		return false;

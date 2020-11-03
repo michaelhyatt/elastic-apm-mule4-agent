@@ -19,7 +19,7 @@ public class SpyConfiguration {
 		for (ConfigurationOptionProvider options : ServiceLoader.load(ConfigurationOptionProvider.class)) {
 			builder.addOptionProvider(spy(options));
 		}
-		return builder.addConfigSource(new SimpleSource(CONFIG_SOURCE_NAME).add("log_level", "DEBUG")
+		return builder.addConfigSource(new SimpleSource(CONFIG_SOURCE_NAME).add("log_level", "INFO")
 				.add("instrument", "false")
 				.add("server_urls", "")).build();
 	}

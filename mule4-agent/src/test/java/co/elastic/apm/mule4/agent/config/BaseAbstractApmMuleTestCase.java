@@ -11,6 +11,8 @@ import org.mockito.stubbing.Answer;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
+import com.google.common.collect.ImmutableList;
+
 import co.elastic.apm.agent.bci.ElasticApmAgent;
 import co.elastic.apm.agent.impl.ElasticApmTracer;
 import co.elastic.apm.agent.impl.ElasticApmTracerBuilder;
@@ -22,7 +24,8 @@ import co.elastic.apm.agent.shaded.stagemonitor.configuration.ConfigurationRegis
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 @ArtifactClassLoaderRunnerConfig(applicationSharedRuntimeLibs = { "co.elastic.apm:elastic-apm-agent",
-		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:apm-agent-api", "co.elastic.apm:mule4-agent", })
+		"co.elastic.apm:apm-agent-attach", "co.elastic.apm:apm-agent-api", "co.elastic.apm:mule4-agent",
+		 })
 public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctionalTestCase {
 
 	protected List<Span> spans;
@@ -93,14 +96,14 @@ public abstract class BaseAbstractApmMuleTestCase extends MuleArtifactFunctional
 
 		synchronized (tx) {
 			if (tx.size() > 0)
-				transaction = tx.get(0);
+				transaction = ImmutableList.copyOf(tx).get(0);
 		}
 
 		return transaction;
 	}
 
 	public List<Transaction> getTransactions() {
-		return tx;
+		return ImmutableList.copyOf(tx);
 	}
 
 	public List<ErrorCapture> getErrors() {
