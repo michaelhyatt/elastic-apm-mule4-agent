@@ -21,6 +21,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<scripting:code ><![CDATA[result = attributes.headers['elastic-apm-traceparent']]]></scripting:code>
 		</scripting:execute>
 	</flow>
+	<flow name="testRequestFlowz" doc:id="de80bbbe-140a-4e18-905d-021bfeabeb80" >
+		<http:listener doc:name="Listener" doc:id="7184f118-3882-4c7d-8422-4e58094ce5bf" config-ref="HTTP_Listener_config" path="/traceparentrequest"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="3b6a7ee7-2c85-407b-81e7-b83d9653a87d" >
+			<scripting:code ><![CDATA[result = attributes.headers['traceparent']]]></scripting:code>
+		</scripting:execute>
+	</flow>
 	<flow name="testFlow" doc:id="aacb4a95-ad0f-4a74-b1ee-995aa4048a75" >
 		<http:listener doc:name="Listener" doc:id="aa4582d9-f2bd-4c0f-b0ca-7db7410f58fe" config-ref="HTTP_Listener_config" path="/"/>
 		<logger level="INFO" doc:name="Logger" doc:id="e3fc1e1c-1247-4323-98f3-c6a9274f0b91" message="1a"/>

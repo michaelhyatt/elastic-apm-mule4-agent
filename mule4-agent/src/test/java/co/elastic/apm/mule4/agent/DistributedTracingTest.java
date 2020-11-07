@@ -24,7 +24,7 @@ public class DistributedTracingTest extends BaseAbstractApmMuleTestCase {
 	public void testTraceIdPropagation() throws Exception {
 
 		HttpGet getRequest = new HttpGet("http://localhost:8998/request");
-		getRequest.addHeader(HttpTracingUtils.ELASTIC_APM_TRACEPARENT, TRACE_PARENT1);
+		getRequest.addHeader(HttpTracingUtils.ELASTIC_APM_TRACEPARENT_HEADER, TRACE_PARENT1);
 
 		HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -63,14 +63,21 @@ public class DistributedTracingTest extends BaseAbstractApmMuleTestCase {
 	@Test
 	public void testTraceIdPropagationThroughHttp() throws Exception {
 
-		HttpGet getRequest = new HttpGet("http://localhost:8998");
-		getRequest.addHeader(HttpTracingUtils.ELASTIC_APM_TRACEPARENT, TRACE_PARENT1);
+		HttpGet getRequest = new HttpGet("http://localhost:8998/traceparentrequest");
+		getRequest.addHeader(HttpTracingUtils.TRACEPARENT_HEADER, TRACE_PARENT1);
 
 		HttpClient httpClient = HttpClientBuilder.create().build();
 
 		HttpResponse response = httpClient.execute(getRequest);
+		
+		Thread.sleep(1000);
 
-
+		assertEquals(200, response.getStatusLine().getStatusCode());
+		assertEquals(TRACE_PARENT1, EntityUtils.toString(response.getEntity()));
+		List<Transaction> transactions = getTransactions();
+		assertEquals(1, transactions.size());
+		assertEquals(1, getSpans().size());
+		assertEquals(TRACE_ID1, getTransaction().getTraceContext().getTraceId().toString());
 	}
 	
 	@Override
