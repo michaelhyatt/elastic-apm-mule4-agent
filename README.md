@@ -90,7 +90,7 @@ pom.xml:
   <dependency>
     <groupId>co.elastic.apm</groupId>
     <artifactId>mule4-agent</artifactId>
-    <version>0.3.0</version>
+    <version>${elastic.mule4.apm.agent}</version>
   </dependency>
 ...
 </dependencies>
