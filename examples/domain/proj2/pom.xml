@@ -57,11 +57,6 @@
 			<classifier>mule-domain</classifier>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>co.elastic.apm</groupId>
-			<artifactId>mule4-agent</artifactId>
-			<version>0.2.0</version>
-		</dependency>
 	</dependencies>
 
 	<repositories>

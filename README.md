@@ -58,3 +58,45 @@ The `dep-test` folder in this repo contains a sample test project configured to 
 #### Metrics
 Elastic Java APM agent also captures JVM metrics, so all the Mule JVM metrics collected by the agent are there as well:
 ![metrics](images/metrics.png)
+
+## Support for Mule domains
+The mule4-agent APM dependency should be added to the domain `pom.xml` file and also be declared as `sharedLibrary` there for it to be visible to the domain projects deployed with the domain configuration.
+pom.xml:
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.mule.tools.maven</groupId>
+      <artifactId>mule-maven-plugin</artifactId>
+      <version>${mule.maven.plugin.version}</version>
+      <extensions>true</extensions>
+      <configuration>
+        <sharedLibraries>
+
+          <!-- Added exported dependency at the domain level for the code to be visible for domain projects -->
+          <sharedLibrary>
+            <groupId>co.elastic.apm</groupId>
+            <artifactId>mule4-agent</artifactId>
+          </sharedLibrary>
+
+        </sharedLibraries>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+<dependencies>
+...
+  <dependency>
+    <groupId>co.elastic.apm</groupId>
+    <artifactId>mule4-agent</artifactId>
+    <version>0.3.0</version>
+  </dependency>
+...
+</dependencies>
+```
+
+Then, every project that needs to be traced, should include the following in the flow definition once per project:
+```xml
+<import doc:name="Import" doc:id="b9240848-52ad-4dcc-8ed4-6f9e864bd1e4" file="tracer.xml" />
+```

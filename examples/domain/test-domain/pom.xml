@@ -26,6 +26,17 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<sharedLibraries>
+					
+						<!-- Added exported dependency at the domain level for the code to be visible for domain projects -->
+						<sharedLibrary>
+							<groupId>co.elastic.apm</groupId>
+							<artifactId>mule4-agent</artifactId>
+						</sharedLibrary>
+						
+					</sharedLibraries>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -42,6 +53,11 @@
 			<artifactId>mule-sockets-connector</artifactId>
 			<version>1.2.0</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>co.elastic.apm</groupId>
+			<artifactId>mule4-agent</artifactId>
+			<version>0.3.0</version>
 		</dependency>
 	</dependencies>
 
