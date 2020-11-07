@@ -5,6 +5,9 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+
+	<import file="tracer.xml"  doc:name="Import" doc:id="de18c1fa-b6c5-46c2-a7db-b7005fb42a0e" />
+
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="22564b6c-9cbc-4efc-90f0-2d6658121a7f" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
@@ -18,7 +21,6 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 				<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"cache-control" : "no-cache",
 	"Content-Type" : "text/html"
 }]]]></http:headers>
 			</http:response>
@@ -85,14 +87,6 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	</flow>
 	<flow name="tracing-testFlow1" doc:id="77e5d1b6-6582-4000-98bb-ca274e239b1f" >
 		<http:listener doc:name="Listener" doc:id="25c6f811-1356-4c51-ad4e-84ef9fb70cd1" config-ref="HTTP_Listener_config" path="/form">
-			<http:response statusCode="301">
-				<http:headers ><![CDATA[#[output application/java
----
-{
-	"cache-control" : "no-store",
-	"location" : "/"
-}]]]></http:headers>
-			</http:response>
 		</http:listener>
 		<logger level="WARN" doc:name="Logger" doc:id="62a0b6fe-84f8-4c1f-bd24-3f1637b7ae77" message="submit pressed"/>
 	</flow>
